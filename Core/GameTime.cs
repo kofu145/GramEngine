@@ -26,6 +26,12 @@ public class GameTime
         stopwatch.Start();
     }
 
+    internal void UpdateTime()
+    {
+        deltaTime = TimeSpan.FromSeconds(stopwatch.ElapsedMilliseconds / 1000f);
+        totalTime = stopwatch.Elapsed;
+    }
+    
     internal void UpdateTime(double seconds)
     {
         deltaTime = TimeSpan.FromSeconds(seconds);

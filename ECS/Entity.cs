@@ -24,6 +24,8 @@ namespace EirEngine.ECS;
         /// </summary>
         public readonly Guid id;
 
+        public Transform Transform;
+
         /// <summary>
         /// Initializes a new entity.
         /// </summary>
@@ -31,6 +33,7 @@ namespace EirEngine.ECS;
         {
             this.id = Guid.NewGuid();
             this.components = new ConcurrentDictionary<Type, IComponent>();
+            this.Transform = new Transform();
         }
 
         /// <summary>

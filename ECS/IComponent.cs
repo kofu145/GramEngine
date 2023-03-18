@@ -15,7 +15,8 @@ public interface IComponent
     // update might want scene?
     public void Update(GameTime gameTime);
 
-    public void LateUpdate(GameTime gameTime);
+    // Check Component.cs on why this is commented out
+    //public void LateUpdate(GameTime gameTime);
 
     public void FixedUpdate(GameTime gameTime);
 

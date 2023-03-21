@@ -17,11 +17,16 @@ public class Sprite : Component
 
     public Vector2 Origin
     {
-        get { return sfmlSprite.Origin.toSysNumVector(); }
-        set { }
+        get { return sfmlSprite.Origin.ToSysNumVector(); }
+        set { sfmlSprite.Origin = value.ToSFMLVector(); }
     }
 
-    public Vector3 Color { get; private set; }
+    public Vector3 Color
+    {
+        get{ return sfmlSprite.Color.to }
+        set{  }
+    }
+
     public bool Enabled = true;
     
     /// <summary>

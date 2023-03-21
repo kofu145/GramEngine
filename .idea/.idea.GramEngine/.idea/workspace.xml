@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="fa55bcd2-da01-4ca5-861d-e1baec7ea9ab" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/Core/GameState.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Core/GameState.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Core/Utils.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Core/Utils.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Core/Window.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Core/Window.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ECS/Components/Sprite.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ECS/Components/Sprite.cs" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProjectId" id="2N8h6e8MmwHdc5kmP0tPLPL7dJc" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.lookFeel&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  }
+}</component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="fa55bcd2-da01-4ca5-861d-e1baec7ea9ab" name="Changes" comment="" />
+      <created>1679051443838</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1679051443838</updated>
+      <workItem from="1679051454796" duration="20413000" />
+      <workItem from="1679289571833" duration="674000" />
+      <workItem from="1679361359064" duration="40000" />
+      <workItem from="1679361427315" duration="630000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="UnityUnitTestConfiguration" currentTestLauncher="NUnit" />
+  <component name="VcsManagerConfiguration">
+    <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
+  </component>
+</project>

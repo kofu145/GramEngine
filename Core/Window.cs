@@ -1,9 +1,9 @@
 ﻿using SFML.Graphics;
 using SFML.Window;
-using EirEngine.ECS.Components;
+using GramEngine.ECS.Components;
 using SFML.System;
 
-namespace EirEngine.Core;
+namespace GramEngine.Core;
 
 public class Window
 {
@@ -77,10 +77,10 @@ public class Window
                 // We set the sprite render transform to be the same as the entity's
                 
                 // shorthand for easy writing
-                var sfmlVectorPos = entity.Transform.Position.toSFMLVector();
+                var sfmlVectorPos = entity.Transform.Position.ToSFMLVector();
                 sprite.sfmlSprite.Position = new Vector2f(sfmlVectorPos.X, sfmlVectorPos.Y);
                 sprite.sfmlSprite.Rotation = entity.Transform.Rotation.Z;
-                sprite.sfmlSprite.Scale = entity.Transform.Scale.toSFMLVector();
+                sprite.sfmlSprite.Scale = entity.Transform.Scale.ToSFMLVector();
                 
                 if (sprite.Enabled)
                 {

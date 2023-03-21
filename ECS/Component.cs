@@ -1,7 +1,7 @@
-﻿using EirEngine.Core;
-using EirEngine.ECS;
+﻿using GramEngine.Core;
+using GramEngine.ECS;
 
-namespace EirEngine.ECS;
+namespace GramEngine.ECS;
 
 public abstract class Component : IComponent
 {

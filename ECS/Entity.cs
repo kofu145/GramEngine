@@ -1,11 +1,11 @@
-﻿using EirEngine.Core;
+﻿using GramEngine.Core;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
 
-namespace EirEngine.ECS;
+namespace GramEngine.ECS;
 
 
 /// <summary>

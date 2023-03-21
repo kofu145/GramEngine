@@ -1,6 +1,6 @@
-﻿using EirEngine.Core;
+﻿using GramEngine.Core;
 
-namespace EirEngine.ECS;
+namespace GramEngine.ECS;
 
 /// <summary>
 /// An interface for the contents of all components; any defined component MUST derive from this.

@@ -1,7 +1,7 @@
 ﻿using SFML.System;
 using SFML.Window;
 
-namespace EirEngine.Core;
+namespace GramEngine.Core;
 
 /// <summary>
 /// An abstract class defining the contents of a gamestate. All gamestates MUST derive from this.
@@ -33,25 +33,40 @@ public abstract class GameState : IGameState
     /// <summary>
     /// Called on the initialization of the game state.
     /// </summary>
-    public abstract void Initialize();
+    public virtual void Initialize()
+    {
+        
+    }
 
     /// <summary>
     /// Called on the loading of everything in the scene.
     /// </summary>
-    public abstract void OnLoad();
+    public virtual void OnLoad()
+    {
+        
+    }
 
     /// <summary>
     /// Called when content is unloaded.
     /// </summary>
-    public abstract void Dispose();
+    public virtual void Dispose()
+    {
+        
+    }
 
     /// <summary>
     /// Called on a fixed timestep. This should include your game logic.
     /// </summary>
-    public abstract void Update(GameTime gameTime);
+    public virtual void Update(GameTime gameTime)
+    {
+        
+    }
 
     /// <summary>
     /// The rendering call, called before Update. Draw calls for rendering sprites should be called here.
     /// </summary>
-    public abstract void Draw();
+    public virtual void Draw()
+    {
+        
+    }
 }

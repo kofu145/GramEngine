@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace EirEngine.Core;
+namespace GramEngine.Core;
 public class GameStateManager
     {
         /// <summary>

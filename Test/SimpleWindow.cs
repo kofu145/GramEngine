@@ -1,7 +1,7 @@
 ﻿using SFML.Graphics;
 using SFML.Window;
 
-namespace EirEngine.Test;
+namespace GramEngine.Test;
 
 // Simple window provided from C# sfml binding examples
 public class SimpleWindow

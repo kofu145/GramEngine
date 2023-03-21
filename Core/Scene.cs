@@ -1,8 +1,8 @@
-﻿using EirEngine.ECS;
+﻿using GramEngine.ECS;
 using SFML.System;
 using System.Numerics;
 
-namespace EirEngine.Core;
+namespace GramEngine.Core;
 
 /// <summary>
 /// A class encapsulating the collection of entities for a gamestate.

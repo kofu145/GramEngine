@@ -1,4 +1,4 @@
-﻿namespace EirEngine.Core;
+﻿namespace GramEngine.Core;
 
 /// <summary>
 /// A convenient interface for all gamestates. This should NOT be utilized for creating gamestates.

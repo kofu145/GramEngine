@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 
-namespace EirEngine.Core;
+namespace GramEngine.Core;
 
 public class GameTime
 {

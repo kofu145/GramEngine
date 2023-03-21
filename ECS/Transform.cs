@@ -1,9 +1,9 @@
 ﻿using SFML.System;
 using SFML.Graphics;
-using EirEngine.Core;
+using GramEngine.Core;
 using System.Numerics;
 
-namespace EirEngine.ECS;
+namespace GramEngine.ECS;
 
 public class Transform
 {

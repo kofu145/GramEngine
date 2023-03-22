@@ -21,10 +21,10 @@ public class Sprite : Component
         set { sfmlSprite.Origin = value.ToSFMLVector(); }
     }
 
-    public Vector3 Color
+    public System.Drawing.Color Color
     {
-        get{ return sfmlSprite.Color.to }
-        set{  }
+        get { return sfmlSprite.Color.ToSysColor(); }
+        set { sfmlSprite.Color = value.ToSFMLColor(); }
     }
 
     public bool Enabled = true;
@@ -36,11 +36,11 @@ public class Sprite : Component
     public Sprite(string textureFilePath)
     {
         this.texture = new Texture(textureFilePath);
-        // setting to point texture filtering
+        // setting to point texture filtering (in future, have a sprite settings struct, like window)
         this.texture.Smooth = false;
         this.sfmlSprite = new SFML.Graphics.Sprite(texture);
         this.Origin = new Vector2(Width / 2, Height / 2);
-        this.Color = new Vector3(1f, 1f, 1f);
+        this.Color = System.Drawing.Color.FromArgb(1, 1, 1);
     }
     
     public override void OnLoad()

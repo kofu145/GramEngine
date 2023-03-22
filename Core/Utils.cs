@@ -1,6 +1,7 @@
 ﻿using SFML.System;
 using System.Numerics;
 using SFML.Graphics;
+using Color = System.Drawing.Color;
 
 namespace GramEngine.Core;
 
@@ -26,8 +27,14 @@ public static class Utils
         return new Vector3(vector.X, vector.Y, vector.Z);
     }
 
-    public static Vector4 ColorToVector4(this SFML.Graphics.Color color)
+    public static Color ToSysColor(this SFML.Graphics.Color color)
     {
-        return new System.Drawing.Color()
+        return Color.FromArgb(color.A, color.R, color.G, color.B);
     }
+
+    public static SFML.Graphics.Color ToSFMLColor(this Color color)
+    {
+        return new SFML.Graphics.Color(color.R, color.G, color.B, color.A);
+    }
+    
 }

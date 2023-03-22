@@ -1,4 +1,5 @@
-﻿using SFML.System;
+﻿using GramEngine.ECS;
+using SFML.System;
 using SFML.Window;
 
 namespace GramEngine.Core;
@@ -68,5 +69,14 @@ public abstract class GameState : IGameState
     public virtual void Draw()
     {
         
+    }
+
+    /// <summary>
+    /// Small shorthand for adding entities
+    /// </summary>
+    /// <param name="entity"></param>
+    public void AddEntity(Entity entity)
+    {
+        GameScene.AddEntity(entity);
     }
 }

@@ -23,7 +23,7 @@
 
 *.suo
 *.user
-.idea/
+.idea/**
 .vs/
 [Bb]in/
 [Oo]bj/

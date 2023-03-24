@@ -38,6 +38,7 @@ public class Window
         window.Resized += Window_Resized;
         window.Closed += Window_Closed;
         
+        //window.SetFramerateLimit(60);
         //window.SetVerticalSyncEnabled(true);
 
         /*var circle = new SFML.Graphics.CircleShape(100f)
@@ -88,30 +89,70 @@ public class Window
             
             
             currentScene.UpdateEntities(gameTime);
-            
-            var spriteEntities = currentScene.Entities
-                .Where(e => e.HasComponent<ECS.Components.Sprite>());
 
-            foreach (var entity in spriteEntities)
+            var renderableEntities = currentScene.Entities
+                .Where(e => 
+                    e.HasComponent<ECS.Components.Sprite>() ||
+                    e.HasComponent<RenderRect>() ||
+                    e.HasComponent<RenderCircle>()
+                );
+
+            foreach (var entity in renderableEntities)
             {
                 // draw call based on whatever sfml implementations
 
                 // should try to get rid of this getcomp call in future whenever possible
-                var sprite = entity.GetComponent<ECS.Components.Sprite>();
 
-                // We set the sprite render transform to be the same as the entity's
-                
-                // shorthand for easy writing
-                var sfmlVectorPos = entity.Transform.Position.ToSFMLVector();
-                sprite.sfmlSprite.Position = new Vector2f(sfmlVectorPos.X, sfmlVectorPos.Y);
-                sprite.sfmlSprite.Rotation = entity.Transform.Rotation.Z;
-                sprite.sfmlSprite.Scale = entity.Transform.Scale.ToSFMLVector();
-                
-                if (sprite.Enabled)
+
+                if (entity.HasComponent<ECS.Components.Sprite>())
                 {
-                    // for z ordering, sort along 
-                    window.Draw(sprite.sfmlSprite);
+                    var sprite = entity.GetComponent<ECS.Components.Sprite>();
+
+                    // We set the sprite render transform to be the same as the entity's
+                    // shorthand for easy writing
+                    var sfmlVectorPos = entity.Transform.Position.ToSFMLVector();
+                    sprite.sfmlSprite.Position = new Vector2f(sfmlVectorPos.X, sfmlVectorPos.Y);
+                    sprite.sfmlSprite.Rotation = entity.Transform.Rotation.Z;
+                    sprite.sfmlSprite.Scale = entity.Transform.Scale.ToSFMLVector();
+                
+                    if (sprite.Enabled)
+                        // for z ordering, sort along 
+                        window.Draw(sprite.sfmlSprite);
                 }
+                
+                if (entity.HasComponent<RenderRect>())
+                {
+                    var rect = entity.GetComponent<RenderRect>();
+
+                    // We set the sprite render transform to be the same as the entity's
+                    // shorthand for easy writing
+                    var sfmlVectorPos = entity.Transform.Position.ToSFMLVector();
+                    rect.rectangleShape.Position = new Vector2f(sfmlVectorPos.X, sfmlVectorPos.Y);
+                    rect.rectangleShape.Rotation = entity.Transform.Rotation.Z;
+                    rect.rectangleShape.Scale = entity.Transform.Scale.ToSFMLVector();
+                
+                    if (rect.Enabled)
+                        // for z ordering, sort along 
+                        window.Draw(rect.rectangleShape);
+                }
+
+                if (entity.HasComponent<RenderCircle>())
+                {
+                    var circle = entity.GetComponent<RenderCircle>();
+
+                    // We set the sprite render transform to be the same as the entity's
+                    // shorthand for easy writing
+                    var sfmlVectorPos = entity.Transform.Position.ToSFMLVector();
+                    circle.circleShape.Position = new Vector2f(sfmlVectorPos.X, sfmlVectorPos.Y);
+                    circle.circleShape.Rotation = entity.Transform.Rotation.Z;
+                    circle.circleShape.Scale = entity.Transform.Scale.ToSFMLVector();
+                
+                    if (circle.Enabled)
+                        // for z ordering, sort along 
+                        window.Draw(circle.circleShape);
+                }
+                
+                
             }
 
             foreach (var entity in textEntities)

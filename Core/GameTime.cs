@@ -42,8 +42,8 @@ public class GameTime
 
     internal void UpdateTime()
     {
-        deltaTime = TimeSpan.FromMilliseconds(stopwatch.Elapsed.Milliseconds);
-        DeltaTime = stopwatch.ElapsedMilliseconds / 1000f;
+        deltaTime = stopwatch.Elapsed;
+        DeltaTime = (float)((double)stopwatch.Elapsed.Ticks / Stopwatch.Frequency);
         TotalTime += deltaTime;
         stopwatch.Restart();
     }

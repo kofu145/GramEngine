@@ -124,8 +124,6 @@ public class GameStateManager
                 screens.Peek().Draw();
             }
         }
-        // TODO: make this be called once the screen is added, not iterate over all
-        // TODO: suggestion - why do we need to call OnLoad() on every state upon game load? perhaps can only load top of stack?
 
         /// <summary>
         /// Calls OnLoad methods for all screens when loading.

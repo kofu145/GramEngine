@@ -41,6 +41,7 @@ public class CircleCollider : Component
             // Don't want to check collisions with self
             .Where(e => e != this.ParentEntity);
 
+        // TODO: fix naive approach, construct neighbors in grid (nearest)
         foreach(Entity entity in collidableEntities)
         {
             var otherTransform = entity.Transform;

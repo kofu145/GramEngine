@@ -1,4 +1,5 @@
-﻿using SFML.Graphics;
+﻿using GramEngine.ECS;
+using SFML.Graphics;
 using SFML.Window;
 using GramEngine.ECS.Components;
 using SFML.System;
@@ -36,6 +37,7 @@ public class Window
         window.KeyPressed += Window_KeyPressed;
         window.Resized += Window_Resized;
         window.Closed += Window_Closed;
+        
         //window.SetVerticalSyncEnabled(true);
 
         /*var circle = new SFML.Graphics.CircleShape(100f)
@@ -49,6 +51,9 @@ public class Window
         GameStateManager.Instance.OnLoad();
         DateTime lastTime = new DateTime();
         float framesRendered = 0;
+        GameStateManager.Instance.GetScreen().GameScene.AddEntity(
+            new Entity().AddComponent(new TextComponent("", "../../../Content/square.ttf", 24))
+            );
         // Start the game loop - Each iteration of this is one frame
         while (window.IsOpen)
         {
@@ -68,6 +73,8 @@ public class Window
             gameTime.UpdateTime();
             //Console.WriteLine(gameTime.DeltaTime);
             
+            var textEntities = currentScene.Entities
+                .Where(e => e.HasComponent<ECS.Components.TextComponent>());
             // small fps calc
             framesRendered++;
             if ((DateTime.Now - lastTime).TotalSeconds >= 1)
@@ -75,7 +82,8 @@ public class Window
                 var fps = framesRendered;
                 framesRendered = 0;
                 lastTime = DateTime.Now;
-                Console.WriteLine(fps);
+                //Console.WriteLine(fps);
+                textEntities.First().GetComponent<TextComponent>().Text = "FPS: " + fps.ToString();
             }
             
             
@@ -83,9 +91,6 @@ public class Window
             
             var spriteEntities = currentScene.Entities
                 .Where(e => e.HasComponent<ECS.Components.Sprite>());
-            
-            var textEntities = currentScene.Entities
-                .Where(e => e.HasComponent<ECS.Components.TextComponent>());
 
             foreach (var entity in spriteEntities)
             {

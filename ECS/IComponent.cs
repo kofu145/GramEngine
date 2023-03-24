@@ -11,6 +11,8 @@ public interface IComponent
 
     public int Priority { get; }
 
+    public bool Enabled { get; set; }
+
     public void Initialize();
     public void OnLoad();
     // update might want scene?

@@ -100,7 +100,10 @@ namespace GramEngine.ECS;
         {
             foreach (var component in components)
             {
-                component.Value.Update(gameTime);
+                if (component.Value.Enabled)
+                {
+                    component.Value.Update(gameTime);
+                }
             }
         }
         

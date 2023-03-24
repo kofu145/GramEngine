@@ -83,6 +83,9 @@ public class Window
             
             var spriteEntities = currentScene.Entities
                 .Where(e => e.HasComponent<ECS.Components.Sprite>());
+            
+            var textEntities = currentScene.Entities
+                .Where(e => e.HasComponent<ECS.Components.TextComponent>());
 
             foreach (var entity in spriteEntities)
             {
@@ -103,6 +106,21 @@ public class Window
                 {
                     // for z ordering, sort along 
                     window.Draw(sprite.sfmlSprite);
+                }
+            }
+
+            foreach (var entity in textEntities)
+            {
+                var textComponent = entity.GetComponent<TextComponent>();
+                // shorthand for easy writing
+                var sfmlVectorPos = entity.Transform.Position.ToSFMLVector();
+                textComponent.text.Position = new Vector2f(sfmlVectorPos.X, sfmlVectorPos.Y);
+                textComponent.text.Rotation = entity.Transform.Rotation.Z;
+                textComponent.text.Scale = entity.Transform.Scale.ToSFMLVector();
+
+                if (textComponent.Enabled)
+                {
+                    window.Draw(textComponent.text);
                 }
             }
             // do we even need this? everything is abstracted away anyway

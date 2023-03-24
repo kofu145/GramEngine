@@ -12,18 +12,20 @@ public abstract class Component : IComponent
     public Transform Transform => ParentEntity.Transform;
 
     public int Priority { get; set; } = 3;
-
+    
+    public bool Enabled { get; set; } = true;
+    
     // these two methods aren't abstract in case the users don't want to define them
 
     
-    public abstract void Initialize();
+    public virtual void Initialize() {}
 
     public virtual void OnLoad() { }
     // Late and Early update might come up sometime in the future? but they don't seem like they're very needed for now
     
     //public virtual void EarlyUpdate(GameTime gameTime) { }
 
-    public abstract void Update(GameTime gameTime);
+    public virtual void Update(GameTime gameTime) {}
 
     //public virtual void LateUpdate(GameTime gameTime) { }
 

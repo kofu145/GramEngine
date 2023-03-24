@@ -6,7 +6,7 @@ namespace GramEngine.ECS.Components;
 public class Shape : Component
 {
     // TODO: Implement!
-    public override void OnLoad()
+    public override void Initialize()
     {
         throw new NotImplementedException();
     }

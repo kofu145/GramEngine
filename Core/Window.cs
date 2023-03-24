@@ -12,18 +12,18 @@ public class Window
 
     private String windowTitle;
     
-    // change this (access modifier) later so we can access these fields from anywhere
-    private uint width;
-    private uint height;
+    // TODO: come up with some smarter implementation to set this, so we don't have cringe global data
+    public static uint Width;
+    public static uint Height;
 
     private GameTime gameTime;
     
     public Window(IGameState initialGameState, string windowTitle = "Eir Engine Window", uint width = 1280, uint height = 720)
     {
         this.windowTitle = windowTitle;
-        this.width = width;
-        this.height = height;
-        gameTime = new GameTime(0, 0);
+        Width = width;
+        Height = height;
+        gameTime = new GameTime();
         GameStateManager.Instance.AddScreen(initialGameState);
     }
 
@@ -31,11 +31,12 @@ public class Window
     public void Run()
     {
         var style = SFML.Window.Styles.Default;
-        var mode = new SFML.Window.VideoMode(width, height);
+        var mode = new SFML.Window.VideoMode(Width, Height);
         var window = new SFML.Graphics.RenderWindow(mode, this.windowTitle, style);
         window.KeyPressed += Window_KeyPressed;
         window.Resized += Window_Resized;
         window.Closed += Window_Closed;
+        //window.SetVerticalSyncEnabled(true);
 
         /*var circle = new SFML.Graphics.CircleShape(100f)
         {
@@ -46,7 +47,8 @@ public class Window
         // The top stack state will be the one being rendered within the window
         
         GameStateManager.Instance.OnLoad();
-        
+        DateTime lastTime = new DateTime();
+        float framesRendered = 0;
         // Start the game loop - Each iteration of this is one frame
         while (window.IsOpen)
         {
@@ -59,10 +61,25 @@ public class Window
             
             window.Clear();
             
-            currentScene.UpdateEntities();
+            currentScene.UpdateEntitiesList();
+
             currentGameState.Update(gameTime);
             // may be more delay from onload to now vs between frames?
             gameTime.UpdateTime();
+            //Console.WriteLine(gameTime.DeltaTime);
+            
+            // small fps calc
+            framesRendered++;
+            if ((DateTime.Now - lastTime).TotalSeconds >= 1)
+            {
+                var fps = framesRendered;
+                framesRendered = 0;
+                lastTime = DateTime.Now;
+                Console.WriteLine(fps);
+            }
+            
+            
+            currentScene.UpdateEntities(gameTime);
             
             var spriteEntities = currentScene.Entities
                 .Where(e => e.HasComponent<ECS.Components.Sprite>());
@@ -103,10 +120,10 @@ public class Window
     private void Window_KeyPressed(object sender, SFML.Window.KeyEventArgs e)
     {
         var window = (SFML.Window.Window)sender;
-        if (e.Code == Keyboard.Key.Escape)
+        /*if (e.Code == Keyboard.Key.Escape)
         {
             window.Close();
-        }
+        }*/
     }
 
     private void Window_Resized(object sender, SFML.Window.SizeEventArgs e)

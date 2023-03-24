@@ -18,9 +18,6 @@ public abstract class GameState : IGameState
     /// </summary>
     public Scene GameScene { get; private set; }
 
-    // temp list for processing inputs, just for now
-    internal List<Keyboard.Key> inputs = new List<Keyboard.Key>();
-
     public GameState()
     {
         GameScene = new Scene();

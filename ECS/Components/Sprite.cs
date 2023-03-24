@@ -40,10 +40,10 @@ public class Sprite : Component
         this.texture.Smooth = false;
         this.sfmlSprite = new SFML.Graphics.Sprite(texture);
         this.Origin = new Vector2(Width / 2, Height / 2);
-        this.Color = System.Drawing.Color.FromArgb(1, 1, 1);
+        this.Color = System.Drawing.Color.FromArgb(255, 255, 255);
     }
     
-    public override void OnLoad()
+    public override void Initialize()
     {
     }
 

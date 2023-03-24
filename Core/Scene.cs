@@ -39,13 +39,34 @@ public class Scene
         entitiesToDestroy.Add(entity);
     }
 
-    internal void UpdateEntities()
+    internal void OnLoad()
     {
         foreach(var entity in entitiesToAdd)
         {
+            entity.ParentScene = this;
             entities.Add(entity);
 
             entity.OnLoad();
+
+        }
+    }
+
+    internal void UpdateEntities(GameTime gameTime)
+    {
+        foreach(var entity in entities)
+        {
+            entity.Update(gameTime);
+        }
+    }
+
+    internal void UpdateEntitiesList()
+    {
+        foreach(var entity in entitiesToAdd)
+        {
+            entity.ParentScene = this;
+            entities.Add(entity);
+
+            entity.Initialize();
 
         }
 

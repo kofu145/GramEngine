@@ -24,7 +24,16 @@ namespace GramEngine.ECS;
         /// </summary>
         public readonly Guid id;
 
+        /// <summary>
+        /// The <see cref="GramEngine.ECS.Transform"/> for this entity.
+        /// </summary>
         public Transform Transform;
+
+        // Just here for utility
+        /// <summary>
+        /// The parent <see cref="Scene"/> of this entity.
+        /// </summary>
+        public Scene ParentScene { get; internal set; }
 
         /// <summary>
         /// Initializes a new entity.
@@ -61,6 +70,14 @@ namespace GramEngine.ECS;
         {
             this.id = Guid.NewGuid();
             components = copyComponents;
+        }
+
+        internal void Initialize()
+        {
+            foreach (var component in components)
+            {
+                component.Value.Initialize();
+            }
         }
 
         internal void OnLoad()

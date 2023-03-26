@@ -6,7 +6,9 @@ public static class GameStateManager
         
         private static Stack<IGameState> screens = new Stack<IGameState>();
 
-        public static Window Window = null;
+        public static Window Window { get; internal set; }
+        
+        public static GameTime GameTime { get; internal set; }
         
         // I've kind of realized that the singleton pattern here is mostly pointless? So I'm changing it to a
         // static class instead.

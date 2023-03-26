@@ -29,15 +29,17 @@ public class Window
     
     public Window(IGameState initialGameState, WindowSettings settings)
     {
+        gameTime = new GameTime();
+
         // TODO: come up with some smarter implementation for this
         // just have to pray no one makes more than one window
         GameStateManager.Window = this;
+        GameStateManager.GameTime = gameTime;
 
         this.settings = settings;
         style = SFML.Window.Styles.Default;
         mode = new SFML.Window.VideoMode(settings.Width, settings.Height);
         window = new SFML.Graphics.RenderWindow(mode, settings.WindowTitle, style);
-        gameTime = new GameTime();
         GameStateManager.AddScreen(initialGameState);
         
     }

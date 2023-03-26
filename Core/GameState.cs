@@ -17,7 +17,7 @@ public abstract class GameState : IGameState
     /// The main scene of the game state.
     /// </summary>
     public Scene GameScene { get; private set; }
-
+    
     public GameState()
     {
         GameScene = new Scene();

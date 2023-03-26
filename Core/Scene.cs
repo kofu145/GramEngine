@@ -39,6 +39,44 @@ public class Scene
         entitiesToDestroy.Add(entity);
     }
 
+    /// <summary>
+    /// <para>Returns the first entity found with a particular tag.</para>
+    /// Use <see cref="FindEntitiesWithTag"/> if you have multiple entities with the same tag.
+    /// </summary>
+    /// <param name="tag">The entity tag to be searched for.</param>
+    public Entity FindWithTag(string tag)
+    {
+        foreach (var entity in entities)
+        {
+            if (entity.Tag == tag)
+            {
+                return entity;
+            }
+        }
+
+        return null;
+    }
+
+    /// <summary>
+    /// Returns all entities found with a particular tag.
+    /// </summary>
+    /// <param name="tag">The entity tag to be searched for.</param>
+    public List<Entity> FindEntitiesWithTag(string tag)
+    {
+        // simple linear search, TODO: faster algorithm?
+        List<Entity> foundEntities = new List<Entity>();
+
+        foreach (var entity in entities)
+        {
+            if (entity.Tag == tag)
+            {
+                foundEntities.Add(entity);
+            }
+        }
+
+        return foundEntities;
+    }
+
     internal void OnLoad()
     {
         foreach(var entity in entitiesToAdd)

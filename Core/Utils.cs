@@ -7,6 +7,16 @@ namespace GramEngine.Core;
 
 public static class Utils
 {
+    public static Vector2 ToVec2(this Vector3 vector)
+    {
+        return new Vector2(vector.X, vector.Y);
+    }
+    
+    public static Vector3 ToVec3(this Vector2 vector)
+    {
+        return new Vector3(vector.X, vector.Y, 0);
+    }
+    
     public static Vector2f ToSFMLVector(this Vector2 vector)
     {
         return new Vector2f(vector.X, vector.Y);

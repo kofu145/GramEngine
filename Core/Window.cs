@@ -11,29 +11,41 @@ public class Window
     // set values that are typical of a window, probably through some struct
     // can use them to manipulate stuff about the window, like the style
 
+    public String WindowTitle
+    {
+        get => windowTitle;
+        set => window.SetTitle(windowTitle = value);
+    }
     private String windowTitle;
     
-    // TODO: come up with some smarter implementation to set this, so we don't have cringe global data
-    public static uint Width;
-    public static uint Height;
+    public uint Width { get => window.Size.X; }
+    public uint Height { get => window.Size.Y; }
 
     private GameTime gameTime;
+    private Styles style;
+    private VideoMode mode;
+    private SFML.Graphics.RenderWindow window;
+    private readonly WindowSettings settings;
     
-    public Window(IGameState initialGameState, string windowTitle = "Eir Engine Window", uint width = 1280, uint height = 720)
+    public Window(IGameState initialGameState, WindowSettings settings)
     {
-        this.windowTitle = windowTitle;
-        Width = width;
-        Height = height;
+        // TODO: come up with some smarter implementation for this
+        // just have to pray no one makes more than one window
+        GameStateManager.Window = this;
+
+        this.settings = settings;
+        style = SFML.Window.Styles.Default;
+        mode = new SFML.Window.VideoMode(settings.Width, settings.Height);
+        window = new SFML.Graphics.RenderWindow(mode, settings.WindowTitle, style);
         gameTime = new GameTime();
-        GameStateManager.Instance.AddScreen(initialGameState);
+        GameStateManager.AddScreen(initialGameState);
+        
     }
 
     
     public void Run()
     {
-        var style = SFML.Window.Styles.Default;
-        var mode = new SFML.Window.VideoMode(Width, Height);
-        var window = new SFML.Graphics.RenderWindow(mode, this.windowTitle, style);
+        
         window.KeyPressed += Window_KeyPressed;
         window.Resized += Window_Resized;
         window.Closed += Window_Closed;
@@ -49,17 +61,17 @@ public class Window
         // Within the loop, the gamestate manager will pull up the current top of the stack
         // The top stack state will be the one being rendered within the window
         
-        GameStateManager.Instance.OnLoad();
+        GameStateManager.OnLoad();
         DateTime lastTime = new DateTime();
         float framesRendered = 0;
-        GameStateManager.Instance.GetScreen().GameScene.AddEntity(
-            new Entity().AddComponent(new TextComponent("", "../../../Content/square.ttf", 24))
+        GameStateManager.GetScreen().GameScene.AddEntity(
+            new Entity().AddComponent(new TextComponent("", "./Content/square.ttf", 24))
             );
         // Start the game loop - Each iteration of this is one frame
         while (window.IsOpen)
         {
             // I hate we have to call to get current scene every frame lol
-            var currentGameState = GameStateManager.Instance.GetScreen();
+            var currentGameState = GameStateManager.GetScreen();
             var currentScene = currentGameState.GameScene;
             
             // Process events
@@ -86,8 +98,7 @@ public class Window
                 //Console.WriteLine(fps);
                 textEntities.First().GetComponent<TextComponent>().Text = "FPS: " + fps.ToString();
             }
-            
-            
+
             currentScene.UpdateEntities(gameTime);
 
             var renderableEntities = currentScene.Entities
@@ -103,7 +114,6 @@ public class Window
 
                 // should try to get rid of this getcomp call in future whenever possible
 
-
                 if (entity.HasComponent<ECS.Components.Sprite>())
                 {
                     var sprite = entity.GetComponent<ECS.Components.Sprite>();
@@ -111,13 +121,19 @@ public class Window
                     // We set the sprite render transform to be the same as the entity's
                     // shorthand for easy writing
                     var sfmlVectorPos = entity.Transform.Position.ToSFMLVector();
-                    sprite.sfmlSprite.Position = new Vector2f(sfmlVectorPos.X, sfmlVectorPos.Y);
+                    sprite.sfmlSprite.Position = new Vector2f(
+                        sfmlVectorPos.X + settings.GlobalXOffset, 
+                        sfmlVectorPos.Y + settings.GlobalYOffset
+                        );
                     sprite.sfmlSprite.Rotation = entity.Transform.Rotation.Z;
                     sprite.sfmlSprite.Scale = entity.Transform.Scale.ToSFMLVector();
-                
+
                     if (sprite.Enabled)
+                    {
+                        
                         // for z ordering, sort along 
                         window.Draw(sprite.sfmlSprite);
+                    }
                 }
                 
                 if (entity.HasComponent<RenderRect>())
@@ -127,7 +143,10 @@ public class Window
                     // We set the sprite render transform to be the same as the entity's
                     // shorthand for easy writing
                     var sfmlVectorPos = entity.Transform.Position.ToSFMLVector();
-                    rect.rectangleShape.Position = new Vector2f(sfmlVectorPos.X, sfmlVectorPos.Y);
+                    rect.rectangleShape.Position = new Vector2f(
+                        sfmlVectorPos.X + settings.GlobalXOffset, 
+                        sfmlVectorPos.Y + settings.GlobalYOffset
+                    );
                     rect.rectangleShape.Rotation = entity.Transform.Rotation.Z;
                     rect.rectangleShape.Scale = entity.Transform.Scale.ToSFMLVector();
                 
@@ -143,7 +162,10 @@ public class Window
                     // We set the sprite render transform to be the same as the entity's
                     // shorthand for easy writing
                     var sfmlVectorPos = entity.Transform.Position.ToSFMLVector();
-                    circle.circleShape.Position = new Vector2f(sfmlVectorPos.X, sfmlVectorPos.Y);
+                    circle.circleShape.Position = new Vector2f(
+                        sfmlVectorPos.X + settings.GlobalXOffset, 
+                        sfmlVectorPos.Y + settings.GlobalYOffset
+                    );
                     circle.circleShape.Rotation = entity.Transform.Rotation.Z;
                     circle.circleShape.Scale = entity.Transform.Scale.ToSFMLVector();
                 
@@ -151,7 +173,6 @@ public class Window
                         // for z ordering, sort along 
                         window.Draw(circle.circleShape);
                 }
-                
                 
             }
 
@@ -171,8 +192,7 @@ public class Window
             }
             // do we even need this? everything is abstracted away anyway
             currentGameState.Draw();
-
-
+            
             // Finally, display the rendered frame on screen
             window.Display();
         }

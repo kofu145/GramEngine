@@ -34,6 +34,11 @@ namespace GramEngine.ECS;
         /// The parent <see cref="Scene"/> of this entity.
         /// </summary>
         public Scene ParentScene { get; internal set; }
+        
+        /// <summary>
+        /// A string attributed to entities for ease of identification. 
+        /// </summary>
+        public string Tag { get; set; }
 
         /// <summary>
         /// Initializes a new entity.

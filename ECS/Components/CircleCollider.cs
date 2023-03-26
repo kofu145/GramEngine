@@ -14,13 +14,15 @@ public class CircleCollider : Component
 
     public float Radius;
     public bool Dynamic;
+    public bool CheckCollision;
     public bool IsColliding { get; private set; }
     private bool wasColliding;
-    public CircleCollider(float radius, bool isDynamic)
+    public CircleCollider(float radius, bool isDynamic, bool checkCollision = true)
     {
         Radius = radius;
         // maybe we can just check if we have a rigidbody?
         Dynamic = isDynamic;
+        CheckCollision = checkCollision;
     }
 
     public override void Initialize()
@@ -41,7 +43,9 @@ public class CircleCollider : Component
             // Don't want to check collisions with self
             .Where(e => e != this.ParentEntity);
 
-        // TODO: fix naive approach, construct neighbors in grid (nearest)
+        if (CheckCollision)
+        {
+            // TODO: fix naive approach, construct neighbors in grid (nearest)
         foreach(Entity entity in collidableEntities)
         {
             var otherTransform = entity.Transform;
@@ -98,6 +102,8 @@ public class CircleCollider : Component
             }
 
         }
+        }
+        
 
     }
 

@@ -1,13 +1,20 @@
 ﻿using System;
 
 namespace GramEngine.Core;
-public class GameStateManager
+public static class GameStateManager
     {
+        
+        private static Stack<IGameState> screens = new Stack<IGameState>();
+
+        public static Window Window = null;
+        
+        // I've kind of realized that the singleton pattern here is mostly pointless? So I'm changing it to a
+        // static class instead.
+        /*
         /// <summary>
         /// The singleton instance of the GameStateManager.
         /// </summary>
         private static GameStateManager instance;
-        private Stack<IGameState> screens = new Stack<IGameState>();
         // Singleton Pattern Logic
         public static GameStateManager Instance
         {
@@ -20,11 +27,12 @@ public class GameStateManager
                 return instance;
             }
         }
+        */
         /// <summary>
         /// Adds a screen to the top of the stack.
         /// </summary>
         /// <param name="screen">The GameState to push to the top of the stack.</param>
-        public void AddScreen(IGameState screen)
+        public static void AddScreen(IGameState screen)
         {
             try
             {
@@ -46,7 +54,7 @@ public class GameStateManager
         /// Returns the current rendering screen at the top of the stack.
         /// </summary>
         /// <returns></returns>
-        public IGameState GetScreen()
+        public static IGameState GetScreen()
         {
             try
             {
@@ -61,7 +69,7 @@ public class GameStateManager
         /// <summary>
         /// Removes the top screen (gamestate) from the stack.
         /// </summary>
-        public void RemoveScreen()
+        public static void RemoveScreen()
         {
             if (screens.Count > 0)
             {
@@ -81,7 +89,7 @@ public class GameStateManager
         /// Removes the top screen (gamestate) from the stack, and appends a new one.
         /// </summary>
         /// <param name="screen"></param>
-        public void SwapScreen(IGameState screen)
+        public static void SwapScreen(IGameState screen)
         {
             RemoveScreen();
             AddScreen(screen);
@@ -90,7 +98,7 @@ public class GameStateManager
         /// <summary>
         /// Clears the entire stack of gamestates.
         /// </summary>
-        public void ClearScreens()
+        public static void ClearScreens()
         {
             screens.Clear();
         }
@@ -98,7 +106,7 @@ public class GameStateManager
         /// Purges all screens from the stack, and adds a new one.
         /// </summary>
         /// <param name="screen">The new <see cref="IGameState"/> screen to add.</param>
-        public void ChangeScreen(IGameState screen)
+        public static void ChangeScreen(IGameState screen)
         {
             ClearScreens();
             AddScreen(screen);
@@ -106,7 +114,7 @@ public class GameStateManager
         /// <summary>
         /// Updates the top screen of the stack.
         /// </summary>
-        public void Update(GameTime gameTime)
+        public static void Update(GameTime gameTime)
         {
             if (screens.Count > 0)
             {
@@ -117,7 +125,7 @@ public class GameStateManager
         /// <summary>
         /// Renders the top screen of the stack.
         /// </summary>
-        public void Draw()
+        public static void Draw()
         {
             if (screens.Count > 0)
             {
@@ -128,7 +136,7 @@ public class GameStateManager
         /// <summary>
         /// Calls OnLoad methods for all screens when loading.
         /// </summary>
-        public void OnLoad()
+        public static void OnLoad()
         {
             foreach (IGameState state in screens)
             {
@@ -138,7 +146,7 @@ public class GameStateManager
         /// <summary>
         /// Calls Dispose methods for all screens when unloading.
         /// </summary>
-        public void Dispose()
+        public static void Dispose()
         {
             foreach (IGameState state in screens)
             {

@@ -27,10 +27,9 @@ public class MathUtil
     /// <param name="p1">A <see cref="Vector2"/> representing the second control point of the curve.</param>
     /// <param name="p2">A <see cref="Vector2"/> representing the third control point of the curve.</param>
     /// <returns>A <see cref="Vector2"/> result position along the curve, based on t.</returns>
-    public static Vector2 QuadraticBezierCurve(float t, Vector2 p0, Vector2 p1, Vector2 p2) {
-
+    public static Vector2 QuadraticBezierCurve(float t, Vector2 p0, Vector2 p1, Vector2 p2) 
+    {
         return p1 + ((1 - t) * (1 - t)) * (p0 - p1) + (t * t) * (p2 - p1);
-
     }
 
     /// <summary>
@@ -48,7 +47,7 @@ public class MathUtil
     /// <param name="p2">A <see cref="Vector2"/> representing the third control point of the curve.</param>
     /// <param name="p3">A <see cref="Vector2"/> representing the fourth control point of the curve.</param>
     /// <returns>A <see cref="Vector2"/> result position along the curve, based on t.</returns>
-    public static Vector2 CubicBezierCurve(float t, Vector2 p0, Vector2 p1, Vector2 p2, Vector2 p3)
+    public static Vector2 CubicBezierCurve(float t, Vector2 p0, Vector2 p1, Vector2 p2, Vector2 p3) 
     {
         return (1 - t) * QuadraticBezierCurve(t, p0, p1, p2) + t * QuadraticBezierCurve(t, p1, p2, p3);
     }
@@ -103,6 +102,5 @@ public class MathUtil
     {
         return (point - min) / (max - min);
     }
-
-
+    
 }

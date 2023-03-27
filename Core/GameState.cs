@@ -41,7 +41,7 @@ public abstract class GameState : IGameState
     /// </summary>
     public virtual void OnLoad()
     {
-        
+        GameScene.OnLoad();
     }
 
     /// <summary>

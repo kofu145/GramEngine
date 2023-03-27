@@ -41,10 +41,9 @@ public class CircleCollider : Component
         var collidableEntities = ParentScene.Entities
             .Where(e => e.HasComponent<CircleCollider>())
             // Don't want to check collisions with self
-            .Where(e => e != this.ParentEntity);
+            .Where(e => e != this.ParentEntity || e.GetComponent<CircleCollider>().CheckCollision);
 
-        if (CheckCollision)
-        {
+
             // TODO: fix naive approach, construct neighbors in grid (nearest)
         foreach(Entity entity in collidableEntities)
         {
@@ -102,8 +101,6 @@ public class CircleCollider : Component
             }
 
         }
-        }
-        
 
     }
 

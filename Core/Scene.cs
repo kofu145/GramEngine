@@ -16,7 +16,8 @@ public class Scene
 
     private List<Entity> entitiesToAdd;
     private List<Entity> entitiesToDestroy;
-    
+    private List<Entity> uninitializedEntities;
+
     public Vector2 backgroundOffset;
 
     public IReadOnlyList<Entity> Entities { get { return entities; } }
@@ -26,6 +27,7 @@ public class Scene
         entities = new List<Entity>();
         entitiesToAdd = new List<Entity>();
         entitiesToDestroy = new List<Entity>();
+        uninitializedEntities = new List<Entity>();
         backgroundOffset = new Vector2(0, 0);
     }
 
@@ -103,9 +105,7 @@ public class Scene
         {
             entity.ParentScene = this;
             entities.Add(entity);
-
-            entity.Initialize();
-
+            uninitializedEntities.Add(entity);
         }
 
         foreach(var entity in entitiesToDestroy)
@@ -116,6 +116,13 @@ public class Scene
 
         entitiesToAdd.Clear();
         entitiesToDestroy.Clear();
+        
+        foreach (var entity in uninitializedEntities)
+        {
+            // in case the collection entitiesToAdd gets modified within initialize();
+            entity.Initialize();
+        }
+        uninitializedEntities.Clear();
     }
 
 }

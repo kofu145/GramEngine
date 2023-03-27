@@ -25,7 +25,7 @@ public class Window
     private Styles style;
     private VideoMode mode;
     private SFML.Graphics.RenderWindow window;
-    private readonly WindowSettings settings;
+    public readonly WindowSettings settings;
     
     public Window(IGameState initialGameState, WindowSettings settings)
     {
@@ -41,7 +41,6 @@ public class Window
         mode = new SFML.Window.VideoMode(settings.Width, settings.Height);
         window = new SFML.Graphics.RenderWindow(mode, settings.WindowTitle, style);
         GameStateManager.AddScreen(initialGameState);
-        
     }
 
     

@@ -21,5 +21,14 @@
     <ItemGroup>
       <PackageReference Include="SFML.Net" Version="2.5.0" />
     </ItemGroup>
+    
+    <ItemGroup>
+        <Content Include="SourceFiles\**">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+    </ItemGroup>
+    <ItemGroup>
+        <Folder Include="SourceFiles" />
+    </ItemGroup>
 
 </Project>

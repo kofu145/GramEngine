@@ -13,6 +13,16 @@ public class MathUtil
     {
         return new Vector2(Lerp(v1.X, v2.X, t), Lerp(v1.Y, v2.Y, t));
     }
+
+    public static float RadToDeg(float radians)
+    {
+        return 180 / (float)Math.PI * radians;
+    }
+
+    public static float DegToRad(float degrees)
+    {
+        return (float)Math.PI / 180 * degrees;
+    }
     
     /// <summary>
     /// Calculates a position along a quadratic bezier curve that outputs a value based on the given variable for t

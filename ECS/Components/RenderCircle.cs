@@ -2,6 +2,7 @@
 using GramEngine.Core;
 using System.Drawing;
 using SFML.Graphics;
+using SFML.System;
 
 namespace GramEngine.ECS.Components;
 
@@ -32,10 +33,17 @@ public class RenderCircle : Component
         get => circleShape.Radius;
         set => circleShape.Radius = value;
     }
+    public Vector2 Origin
+    {
+        get { return circleShape.Origin.ToSysNumVector(); }
+        set { circleShape.Origin = value.ToSFMLVector(); }
+    }
 
-    public RenderCircle(float radius)
+    public RenderCircle(float radius, bool centerOrigin = true)
     {
         this.circleShape = new CircleShape(radius);
+        if (centerOrigin)
+            circleShape.Origin = new Vector2f(radius, radius);
     }
 
     protected void SetTexture(string texturePath)

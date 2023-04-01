@@ -168,7 +168,7 @@ public class Window
                         sfmlVectorPos.Y + settings.GlobalYOffset
                     );
                     circle.circleShape.Rotation = entity.Transform.Rotation.Z;
-                    circle.circleShape.Scale = entity.Transform.Scale.ToSFMLVector();
+                    //circle.circleShape.Scale = entity.Transform.Scale.ToSFMLVector();
                 
                     if (circle.Enabled)
                         // for z ordering, sort along 

@@ -18,12 +18,20 @@ public class MathUtil
     {
         return 180 / (float)Math.PI * radians;
     }
-
+    public static double RadToDeg(double radians)
+    {
+        return 180 / Math.PI * radians;
+    }
+    
     public static float DegToRad(float degrees)
     {
         return (float)Math.PI / 180 * degrees;
     }
     
+    public static double DegToRad(double degrees)
+    {
+        return Math.PI / 180 * degrees;
+    }
     /// <summary>
     /// Calculates a position along a quadratic bezier curve that outputs a value based on the given variable for t
     /// along the given control points, taken as <see cref="Vector2"/>.

@@ -8,6 +8,8 @@ public struct WindowSettings
     public int GlobalXOffset;
     public int GlobalYOffset;
     public bool ShowColliders;
+    // This one is purely for demonstrating/comparing efficiency.
+    public bool NaiveCollision;
 
     public WindowSettings()
     {
@@ -17,6 +19,7 @@ public struct WindowSettings
         GlobalXOffset = 0;
         GlobalYOffset = 0;
         ShowColliders = false;
+        NaiveCollision = false;
     }
     
 }

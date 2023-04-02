@@ -17,6 +17,7 @@ public class Scene
     private List<Entity> entitiesToAdd;
     private List<Entity> entitiesToDestroy;
     private List<Entity> uninitializedEntities;
+    internal List<IComponentSystem> systems;
 
     public Vector2 backgroundOffset;
 

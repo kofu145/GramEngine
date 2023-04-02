@@ -136,9 +136,7 @@ public class Window
                 Draw(entity);
             }
                 
-            
-            
-
+            // debug rendering
             foreach (var entity in textEntities)
             {
                 var textComponent = entity.GetComponent<TextComponent>();
@@ -153,6 +151,25 @@ public class Window
                     window.Draw(textComponent.text);
                 }
             }
+            
+            var circleColliderEntities = currentScene.Entities
+                .Where(e => e.HasComponent<ECS.Components.CircleCollider>());
+
+            foreach (var entity in circleColliderEntities)
+            {
+                var circleCollider = entity.GetComponent<CircleCollider>();
+                var sfmlVectorPos = entity.Transform.Position.ToSFMLVector();
+                circleCollider.circleShape.Position = new Vector2f(
+                    sfmlVectorPos.X + settings.GlobalXOffset, 
+                    sfmlVectorPos.Y + settings.GlobalYOffset
+                );                circleCollider.circleShape.Rotation = entity.Transform.Rotation.Z;
+                //circleCollider.circleShape.Scale = entity.Transform.Scale.ToSFMLVector();
+                if (settings.ShowColliders)
+                {
+                    window.Draw(circleCollider.circleShape);                  
+                }
+            }
+            
             // do we even need this? everything is abstracted away anyway
             currentGameState.Draw();
             

@@ -7,6 +7,7 @@ public struct WindowSettings
     public uint Height;
     public int GlobalXOffset;
     public int GlobalYOffset;
+    public bool ShowColliders;
 
     public WindowSettings()
     {
@@ -15,6 +16,7 @@ public struct WindowSettings
         Height = 720;
         GlobalXOffset = 0;
         GlobalYOffset = 0;
+        ShowColliders = false;
     }
     
 }

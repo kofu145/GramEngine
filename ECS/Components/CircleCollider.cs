@@ -1,4 +1,6 @@
-﻿using GramEngine.Core;
+﻿using System.Numerics;
+using GramEngine.Core;
+using SFML.Graphics;
 
 namespace GramEngine.ECS.Components;
 
@@ -15,6 +17,7 @@ public class CircleCollider : Component
     public float Radius;
     public bool Dynamic;
     public bool CheckCollision;
+    internal CircleShape circleShape;
     public bool IsColliding { get; private set; }
     private bool wasColliding;
     public CircleCollider(float radius, bool isDynamic, bool checkCollision = true)
@@ -23,6 +26,11 @@ public class CircleCollider : Component
         // maybe we can just check if we have a rigidbody?
         Dynamic = isDynamic;
         CheckCollision = checkCollision;
+        circleShape = new CircleShape(radius);
+        circleShape.FillColor = System.Drawing.Color.Empty.ToSFMLColor();
+        circleShape.OutlineColor = System.Drawing.Color.Aquamarine.ToSFMLColor();
+        circleShape.OutlineThickness = 1;
+        circleShape.Origin = new Vector2(radius, radius).ToSFMLVector();
     }
 
     public override void Initialize()

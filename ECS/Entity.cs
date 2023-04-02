@@ -39,6 +39,8 @@ namespace GramEngine.ECS;
         /// A string attributed to entities for ease of identification. 
         /// </summary>
         public string Tag { get; set; }
+        
+        internal bool isMaster { get; set; } = false;
 
         /// <summary>
         /// Initializes a new entity.

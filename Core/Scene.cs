@@ -13,22 +13,25 @@ public class Scene
     /// The list of all entities in the scene.
     /// </summary>
     private List<Entity> entities;
-
+    private List<Entity> masterEntities;
+    
     private List<Entity> entitiesToAdd;
     private List<Entity> entitiesToDestroy;
     private List<Entity> uninitializedEntities;
     internal List<IComponentSystem> systems;
 
     public Vector2 backgroundOffset;
-
     public IReadOnlyList<Entity> Entities { get { return entities; } }
     
+    internal IReadOnlyList<Entity> EntitiesAndMaster => entities.Concat(masterEntities).ToList();
+
     public Scene()
     {
         entities = new List<Entity>();
         entitiesToAdd = new List<Entity>();
         entitiesToDestroy = new List<Entity>();
         uninitializedEntities = new List<Entity>();
+        masterEntities = new List<Entity>();
         backgroundOffset = new Vector2(0, 0);
     }
 
@@ -50,6 +53,24 @@ public class Scene
     public Entity FindWithTag(string tag)
     {
         foreach (var entity in entities)
+        {
+            if (entity.Tag == tag)
+            {
+                return entity;
+            }
+        }
+
+        return null;
+    }
+    
+    /// <summary>
+    /// <para>Returns the first entity found with a particular tag.</para>
+    /// Use <see cref="FindEntitiesWithTag"/> if you have multiple entities with the same tag.
+    /// </summary>
+    /// <param name="tag">The entity tag to be searched for.</param>
+    internal Entity FindMasterEntityWithTag(string tag)
+    {
+        foreach (var entity in masterEntities)
         {
             if (entity.Tag == tag)
             {
@@ -85,16 +106,22 @@ public class Scene
         foreach(var entity in entitiesToAdd)
         {
             entity.ParentScene = this;
-            entities.Add(entity);
-
+            if (entity.isMaster)
+                masterEntities.Add(entity);
+            else
+                entities.Add(entity);
             entity.OnLoad();
-
         }
     }
 
     internal void UpdateEntities(GameTime gameTime)
     {
         foreach(var entity in entities)
+        {
+            entity.Update(gameTime);
+        }
+
+        foreach (var entity in masterEntities)
         {
             entity.Update(gameTime);
         }
@@ -105,14 +132,20 @@ public class Scene
         foreach(var entity in entitiesToAdd)
         {
             entity.ParentScene = this;
-            entities.Add(entity);
+            if (entity.isMaster)
+                masterEntities.Add(entity);
+            else
+                entities.Add(entity);
             uninitializedEntities.Add(entity);
         }
 
         foreach(var entity in entitiesToDestroy)
         {
             entity.Dispose();
-            entities.Remove(entity);
+            if (entity.isMaster)
+                masterEntities.Remove(entity);
+            else
+                entities.Remove(entity);
         }
 
         entitiesToAdd.Clear();

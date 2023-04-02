@@ -64,10 +64,27 @@ public class Window
         
         GameStateManager.OnLoad();
         DateTime lastTime = new DateTime();
+        
+        // TODO: this data needs to be recycled on a per scene basis
         float framesRendered = 0;
-        GameStateManager.GetScreen().GameScene.AddEntity(
-            new Entity().AddComponent(new TextComponent("", "./Content/square.ttf", 24))
-            );
+        var fpsEntity = new Entity().AddComponent(new TextComponent("", "./Content/square.ttf", 24));
+        fpsEntity.isMaster = true;
+        fpsEntity.Tag = "FPS";
+        GameStateManager.GetScreen().GameScene.AddEntity(fpsEntity);
+        
+        float lowestFPS = int.MaxValue;
+        var lowFPSEntity = new Entity().AddComponent(new TextComponent("", "./Content/square.ttf", 24));
+        lowFPSEntity.Transform.Position.Y += 40;
+        lowFPSEntity.isMaster = true;
+        lowFPSEntity.Tag = "lowFPS";
+        GameStateManager.GetScreen().GameScene.AddEntity(lowFPSEntity);
+
+        if (!settings.NaiveCollision)
+        {
+            var circleCollisionManager = new Entity().AddComponent(new CircleColliderSystem(50));
+            GameStateManager.GetScreen().GameScene.AddEntity(circleCollisionManager);
+        }
+
         // Start the game loop - Each iteration of this is one frame
         while (window.IsOpen)
         {
@@ -87,8 +104,12 @@ public class Window
             gameTime.UpdateTime();
             //Console.WriteLine(gameTime.DeltaTime);
             
-            var textEntities = currentScene.Entities
+            var textEntities = currentScene.EntitiesAndMaster
                 .Where(e => e.HasComponent<ECS.Components.TextComponent>());
+
+            // TODO: update all new scenes with FPS entity if enabled
+            fpsEntity = currentScene.FindMasterEntityWithTag("FPS");
+            lowFPSEntity = currentScene.FindMasterEntityWithTag("lowFPS");
             // small fps calc
             framesRendered++;
             if ((DateTime.Now - lastTime).TotalSeconds >= 1)
@@ -97,12 +118,18 @@ public class Window
                 framesRendered = 0;
                 lastTime = DateTime.Now;
                 //Console.WriteLine(fps);
-                textEntities.First().GetComponent<TextComponent>().Text = "FPS: " + fps.ToString();
+                fpsEntity.GetComponent<TextComponent>().Text = "FPS: " + fps.ToString();
+                if (fps < lowestFPS && fps > 10)
+                {
+                    lowestFPS = fps;
+                    lowFPSEntity.GetComponent<TextComponent>().Text = "Lowest FPS: " + lowestFPS.ToString();
+                }
+                
             }
 
             currentScene.UpdateEntities(gameTime);
 
-            var renderableEntities = currentScene.Entities
+            var renderableEntities = currentScene.EntitiesAndMaster
                 .Where(e => 
                     e.HasComponent<ECS.Components.Sprite>() ||
                     e.HasComponent<RenderRect>() ||
@@ -133,7 +160,65 @@ public class Window
                             }
                         }
                     } */
-                Draw(entity);
+                if (entity.HasComponent<ECS.Components.Sprite>())
+                {
+                    var sprite = entity.GetComponent<ECS.Components.Sprite>();
+
+                    // We set the sprite render transform to be the same as the entity's
+                    // shorthand for easy writing
+                    var sfmlVectorPos = entity.Transform.Position.ToSFMLVector();
+                    sprite.sfmlSprite.Position = new Vector2f(
+                        sfmlVectorPos.X + settings.GlobalXOffset, 
+                        sfmlVectorPos.Y + settings.GlobalYOffset
+                        );
+                    sprite.sfmlSprite.Rotation = entity.Transform.Rotation.Z;
+                    sprite.sfmlSprite.Scale = entity.Transform.Scale.ToSFMLVector();
+
+                    if (sprite.Enabled)
+                    {
+                        
+                        // for z ordering, sort along 
+                        window.Draw(sprite.sfmlSprite);
+                    }
+                }
+                
+                if (entity.HasComponent<RenderRect>())
+                {
+                    var rect = entity.GetComponent<RenderRect>();
+
+                    // We set the sprite render transform to be the same as the entity's
+                    // shorthand for easy writing
+                    var sfmlVectorPos = entity.Transform.Position.ToSFMLVector();
+                    rect.rectangleShape.Position = new Vector2f(
+                        sfmlVectorPos.X + settings.GlobalXOffset, 
+                        sfmlVectorPos.Y + settings.GlobalYOffset
+                    );
+                    rect.rectangleShape.Rotation = entity.Transform.Rotation.Z;
+                    rect.rectangleShape.Scale = entity.Transform.Scale.ToSFMLVector();
+                
+                    if (rect.Enabled)
+                        // for z ordering, sort along 
+                        window.Draw(rect.rectangleShape);
+                }
+
+                if (entity.HasComponent<RenderCircle>())
+                {
+                    var circle = entity.GetComponent<RenderCircle>();
+
+                    // We set the sprite render transform to be the same as the entity's
+                    // shorthand for easy writing
+                    var sfmlVectorPos = entity.Transform.Position.ToSFMLVector();
+                    circle.circleShape.Position = new Vector2f(
+                        sfmlVectorPos.X + settings.GlobalXOffset, 
+                        sfmlVectorPos.Y + settings.GlobalYOffset
+                    );
+                    circle.circleShape.Rotation = entity.Transform.Rotation.Z;
+                    //circle.circleShape.Scale = entity.Transform.Scale.ToSFMLVector();
+                
+                    if (circle.Enabled)
+                        // for z ordering, sort along 
+                        window.Draw(circle.circleShape);
+                }
             }
                 
             // debug rendering
@@ -152,7 +237,7 @@ public class Window
                 }
             }
             
-            var circleColliderEntities = currentScene.Entities
+            var circleColliderEntities = currentScene.EntitiesAndMaster
                 .Where(e => e.HasComponent<ECS.Components.CircleCollider>());
 
             foreach (var entity in circleColliderEntities)

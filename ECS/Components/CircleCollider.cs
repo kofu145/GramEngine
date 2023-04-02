@@ -18,8 +18,8 @@ public class CircleCollider : Component
     public bool Dynamic;
     public bool CheckCollision;
     internal CircleShape circleShape;
-    public bool IsColliding { get; private set; }
-    private bool wasColliding;
+    public bool IsColliding { get; internal set; }
+    internal bool wasColliding;
 
     private bool isNaive;
     public CircleCollider(float radius, bool isDynamic, bool checkCollision = true)
@@ -39,6 +39,21 @@ public class CircleCollider : Component
     public override void Initialize()
     {
         // assume we already have a transform, may edit htis later somewhere else so addcomp order doesn't matter
+    }
+
+    internal void OnEnterCollide(CircleCollider collider)
+    {
+        OnEnterCollision?.Invoke(collider);
+    }
+    
+    internal void OnCollide(CircleCollider collider)
+    {
+        OnCollision?.Invoke(collider);
+    }
+    
+    internal void OnExitCollide(CircleCollider collider)
+    {
+        OnExitCollision?.Invoke(collider);
     }
 
     public override void Update(GameTime gameTime)
@@ -74,8 +89,8 @@ public class CircleCollider : Component
                     {
                         OnEnterCollision?.Invoke(otherCollider);
                     }
-                        // invoke collision event
-                        OnCollision?.Invoke(otherCollider);
+                    // invoke collision event
+                    OnCollision?.Invoke(otherCollider);
                     IsColliding = true;
 
                     // TODO: swept testing for higher velocity colliders

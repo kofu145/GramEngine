@@ -7,14 +7,14 @@ using System.Numerics;
 namespace GramEngine.ECS.Components;
 
 // Essentially a wrapper over SFML sprite
-public class Sprite : Component
+public class Sprite : Component, IRenderable
 {
     private Texture texture;
-    internal SFML.Graphics.Sprite sfmlSprite;
-    
+    internal SFML.Graphics.Sprite sfmlSprite { get; set; }
     public int Width => Convert.ToInt32(this.texture.Size.X);
     public int Height => Convert.ToInt32(this.texture.Size.Y);
 
+    Drawable IRenderable.GetRenderTarget() => GetRenderTarget();
     public Vector2 Origin
     {
         get { return sfmlSprite.Origin.ToSysNumVector(); }
@@ -46,6 +46,39 @@ public class Sprite : Component
         {
             this.Origin = new Vector2(Width / 2, Height / 2);
         }
+    }
+
+    public SFML.Graphics.Sprite GetRenderTarget()
+    {
+        return sfmlSprite;
+    }
+
+    public SFML.Graphics.Transform GetTransformTarget()
+    {
+        var settings = GameStateManager.Window.settings;
+        var sfmlVectorPos = Transform.Position.ToSFMLVector();
+        sfmlSprite.Position = new Vector2f(
+            sfmlVectorPos.X + settings.GlobalXOffset, 
+            sfmlVectorPos.Y + settings.GlobalYOffset
+        );
+        sfmlSprite.Rotation = Transform.Rotation.Z;
+        sfmlSprite.Scale = Transform.Scale.ToSFMLVector();
+        return sfmlSprite.Transform;
+    }
+
+    void IRenderable.Draw(RenderWindow window)
+    {
+        // We set the sprite render transform to be the same as the entity's
+        // shorthand for easy writing
+        var settings = GameStateManager.Window.settings;
+        var sfmlVectorPos = Transform.Position.ToSFMLVector();
+        sfmlSprite.Position = new Vector2f(
+            sfmlVectorPos.X + settings.GlobalXOffset, 
+            sfmlVectorPos.Y + settings.GlobalYOffset
+        );
+        sfmlSprite.Rotation = Transform.Rotation.Z;
+        sfmlSprite.Scale = Transform.Scale.ToSFMLVector();
+        sfmlSprite.Draw(window, new RenderStates(sfmlSprite.Transform));
     }
     
     public override void Initialize()

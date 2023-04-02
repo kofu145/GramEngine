@@ -6,10 +6,12 @@ using SFML.System;
 
 namespace GramEngine.ECS.Components;
 
-public class RenderCircle : Component
+public class RenderCircle : Component, IRenderable
 {
     internal CircleShape circleShape;
+    Drawable IRenderable.GetRenderTarget() => GetRenderTarget();
 
+    
     public System.Drawing.Color FillColor
     {
         get => circleShape.FillColor.ToSysColor();
@@ -44,6 +46,37 @@ public class RenderCircle : Component
         this.circleShape = new CircleShape(radius);
         if (centerOrigin)
             circleShape.Origin = new Vector2f(radius, radius);
+    }
+    
+    public SFML.Graphics.CircleShape GetRenderTarget()
+    {
+        return circleShape;
+    }
+
+    public SFML.Graphics.Transform GetTransformTarget()
+    {
+        var settings = GameStateManager.Window.settings;
+        var sfmlVectorPos = Transform.Position.ToSFMLVector();
+        circleShape.Position = new Vector2f(
+            sfmlVectorPos.X + settings.GlobalXOffset, 
+            sfmlVectorPos.Y + settings.GlobalYOffset
+        );
+        circleShape.Rotation = Transform.Rotation.Z;
+        circleShape.Scale = Transform.Scale.ToSFMLVector();
+        return circleShape.Transform;
+    }
+
+    void IRenderable.Draw(RenderWindow window)
+    {
+        var settings = GameStateManager.Window.settings;
+        var sfmlVectorPos = Transform.Position.ToSFMLVector();
+        circleShape.Position = new Vector2f(
+            sfmlVectorPos.X + settings.GlobalXOffset, 
+            sfmlVectorPos.Y + settings.GlobalYOffset
+        );
+        circleShape.Rotation = Transform.Rotation.Z;
+        //circleShape.Scale = Transform.Scale.ToSFMLVector();
+        circleShape.Draw(window, new RenderStates(circleShape.Transform));
     }
 
     protected void SetTexture(string texturePath)

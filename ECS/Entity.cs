@@ -167,8 +167,20 @@ namespace GramEngine.ECS;
             components.TryRemove(typeof(T), out value);
             return value;
         }
-        
-        
+
+        internal List<IComponent> GetRenderable()
+        {
+            var renderables = new List<IComponent>();
+            foreach (var component in components)
+            {
+                if (component.Value is IRenderable)
+                {
+                    renderables.Add(component.Value);
+                }
+            }
+
+            return renderables;
+        }
 
         /*
          

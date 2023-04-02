@@ -108,74 +108,37 @@ public class Window
                     e.HasComponent<RenderRect>() ||
                     e.HasComponent<RenderCircle>()
                 );
-
+    
+            
             foreach (var entity in renderableEntities)
             {
-                // draw call based on whatever sfml implementations
-
-                // should try to get rid of this getcomp call in future whenever possible
-
-                if (entity.HasComponent<ECS.Components.Sprite>())
-                {
-                    var sprite = entity.GetComponent<ECS.Components.Sprite>();
-
-                    // We set the sprite render transform to be the same as the entity's
-                    // shorthand for easy writing
-                    var sfmlVectorPos = entity.Transform.Position.ToSFMLVector();
-                    sprite.sfmlSprite.Position = new Vector2f(
-                        sfmlVectorPos.X + settings.GlobalXOffset, 
-                        sfmlVectorPos.Y + settings.GlobalYOffset
-                        );
-                    sprite.sfmlSprite.Rotation = entity.Transform.Rotation.Z;
-                    sprite.sfmlSprite.Scale = entity.Transform.Scale.ToSFMLVector();
-
-                    if (sprite.Enabled)
+                // this cleaner implementation here is super buggy and weird, maybe will actually try to get it working
+                // sometime in the future.
+                /*
+                    // draw call based on whatever sfml implementations
+    
+                    // should try to get rid of this getcomp call in future whenever possible
+                    
+                    var renderables = entity.GetRenderable();
+                    if (renderables.Count > 0)
                     {
-                        
-                        // for z ordering, sort along 
-                        window.Draw(sprite.sfmlSprite);
-                    }
-                }
-                
-                if (entity.HasComponent<RenderRect>())
-                {
-                    var rect = entity.GetComponent<RenderRect>();
-
-                    // We set the sprite render transform to be the same as the entity's
-                    // shorthand for easy writing
-                    var sfmlVectorPos = entity.Transform.Position.ToSFMLVector();
-                    rect.rectangleShape.Position = new Vector2f(
-                        sfmlVectorPos.X + settings.GlobalXOffset, 
-                        sfmlVectorPos.Y + settings.GlobalYOffset
-                    );
-                    rect.rectangleShape.Rotation = entity.Transform.Rotation.Z;
-                    rect.rectangleShape.Scale = entity.Transform.Scale.ToSFMLVector();
-                
-                    if (rect.Enabled)
-                        // for z ordering, sort along 
-                        window.Draw(rect.rectangleShape);
-                }
-
-                if (entity.HasComponent<RenderCircle>())
-                {
-                    var circle = entity.GetComponent<RenderCircle>();
-
-                    // We set the sprite render transform to be the same as the entity's
-                    // shorthand for easy writing
-                    var sfmlVectorPos = entity.Transform.Position.ToSFMLVector();
-                    circle.circleShape.Position = new Vector2f(
-                        sfmlVectorPos.X + settings.GlobalXOffset, 
-                        sfmlVectorPos.Y + settings.GlobalYOffset
-                    );
-                    circle.circleShape.Rotation = entity.Transform.Rotation.Z;
-                    //circle.circleShape.Scale = entity.Transform.Scale.ToSFMLVector();
-                
-                    if (circle.Enabled)
-                        // for z ordering, sort along 
-                        window.Draw(circle.circleShape);
-                }
-                
+                        foreach (IComponent component in renderables)
+                        {
+                            if (component.Enabled)
+                            {
+                                Console.WriteLine("component!");
+                                IRenderable renderable = (IRenderable)component;
+                                renderable.GetTransformTarget();
+                                //renderable.Draw(window);
+                                window.Draw(renderable.GetRenderTarget());
+                            }
+                        }
+                    } */
+                Draw(entity);
             }
+                
+            
+            
 
             foreach (var entity in textEntities)
             {
@@ -222,6 +185,69 @@ public class Window
         // TODO: Should be calling Dispose() methods here
         RenderWindow window = (RenderWindow)sender;
         window.Close();
+    }
+
+    private void Draw(Entity entity)
+    {
+        if (entity.HasComponent<ECS.Components.Sprite>())
+        {
+            var sprite = entity.GetComponent<ECS.Components.Sprite>();
+
+            // We set the sprite render transform to be the same as the entity's
+            // shorthand for easy writing
+            var sfmlVectorPos = entity.Transform.Position.ToSFMLVector();
+            sprite.sfmlSprite.Position = new Vector2f(
+                sfmlVectorPos.X + settings.GlobalXOffset, 
+                sfmlVectorPos.Y + settings.GlobalYOffset
+                );
+            sprite.sfmlSprite.Rotation = entity.Transform.Rotation.Z;
+            sprite.sfmlSprite.Scale = entity.Transform.Scale.ToSFMLVector();
+
+            if (sprite.Enabled)
+            {
+                
+                // for z ordering, sort along 
+                window.Draw(sprite.sfmlSprite);
+            }
+        }
+        
+        if (entity.HasComponent<RenderRect>())
+        {
+            var rect = entity.GetComponent<RenderRect>();
+
+            // We set the sprite render transform to be the same as the entity's
+            // shorthand for easy writing
+            var sfmlVectorPos = entity.Transform.Position.ToSFMLVector();
+            rect.rectangleShape.Position = new Vector2f(
+                sfmlVectorPos.X + settings.GlobalXOffset, 
+                sfmlVectorPos.Y + settings.GlobalYOffset
+            );
+            rect.rectangleShape.Rotation = entity.Transform.Rotation.Z;
+            rect.rectangleShape.Scale = entity.Transform.Scale.ToSFMLVector();
+        
+            if (rect.Enabled)
+                // for z ordering, sort along 
+                window.Draw(rect.rectangleShape);
+        }
+
+        if (entity.HasComponent<RenderCircle>())
+        {
+            var circle = entity.GetComponent<RenderCircle>();
+
+            // We set the sprite render transform to be the same as the entity's
+            // shorthand for easy writing
+            var sfmlVectorPos = entity.Transform.Position.ToSFMLVector();
+            circle.circleShape.Position = new Vector2f(
+                sfmlVectorPos.X + settings.GlobalXOffset, 
+                sfmlVectorPos.Y + settings.GlobalYOffset
+            );
+            circle.circleShape.Rotation = entity.Transform.Rotation.Z;
+            //circle.circleShape.Scale = entity.Transform.Scale.ToSFMLVector();
+        
+            if (circle.Enabled)
+                // for z ordering, sort along 
+                window.Draw(circle.circleShape);
+        }
     }
     
     // Neat little function to convert to letterbox view, using window width/height

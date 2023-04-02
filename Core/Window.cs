@@ -107,8 +107,7 @@ public class Window
                     e.HasComponent<ECS.Components.Sprite>() ||
                     e.HasComponent<RenderRect>() ||
                     e.HasComponent<RenderCircle>()
-                );
-    
+                ).OrderBy(entity => entity.Transform.Position.Z);
             
             foreach (var entity in renderableEntities)
             {

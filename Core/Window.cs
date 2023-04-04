@@ -81,7 +81,7 @@ public class Window
 
         if (!settings.NaiveCollision)
         {
-            var circleCollisionManager = new Entity().AddComponent(new CircleColliderSystem(50));
+            var circleCollisionManager = new Entity().AddComponent(new CircleColliderSystem(30));
             GameStateManager.GetScreen().GameScene.AddEntity(circleCollisionManager);
         }
 
@@ -126,6 +126,7 @@ public class Window
                 }
                 
             }
+            //lowFPSEntity.GetComponent<TextComponent>().Text = "entities: " + currentScene.Entities.Count;
 
             currentScene.UpdateEntities(gameTime);
 

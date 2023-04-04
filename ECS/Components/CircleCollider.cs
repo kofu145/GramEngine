@@ -135,5 +135,6 @@ public class CircleCollider : Component
         OnEnterCollision = null;
         OnCollision = null;
         OnExitCollision = null;
+        circleShape.Dispose();
     }
 }

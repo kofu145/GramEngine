@@ -103,13 +103,9 @@ public class Scene
 
     internal void OnLoad()
     {
-        foreach(var entity in entitiesToAdd)
+        UpdateEntitiesList();
+        foreach (var entity in entities)
         {
-            entity.ParentScene = this;
-            if (entity.isMaster)
-                masterEntities.Add(entity);
-            else
-                entities.Add(entity);
             entity.OnLoad();
         }
     }
@@ -141,11 +137,12 @@ public class Scene
 
         foreach(var entity in entitiesToDestroy)
         {
-            entity.Dispose();
             if (entity.isMaster)
                 masterEntities.Remove(entity);
             else
                 entities.Remove(entity);
+            entity.Dispose();
+
         }
 
         entitiesToAdd.Clear();

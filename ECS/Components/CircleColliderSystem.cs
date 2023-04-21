@@ -138,6 +138,8 @@ internal class CircleColliderSystem : Component
         var e1T = e1.Transform;
         var e2T = e2.Transform;
 
+        if (c1 == c2)
+            return;
         
         c1.wasColliding = false;
         if (c1.IsColliding)

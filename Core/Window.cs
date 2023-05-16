@@ -37,6 +37,14 @@ public class Window
         GameStateManager.GameTime = gameTime;
 
         this.settings = settings;
+        
+        // super quick bandaid fix for base height/win height clamp issues when using settings
+        if (settings.BaseWindowHeight != settings.Height || settings.BaseWindowWidth != settings.Width)
+        {
+            this.settings.BaseWindowHeight = settings.Height;
+            this.settings.BaseWindowWidth = settings.Width;
+            Console.WriteLine(settings.BaseWindowHeight);
+        }
         style = SFML.Window.Styles.Default;
         mode = new SFML.Window.VideoMode(settings.Width, settings.Height);
         window = new SFML.Graphics.RenderWindow(mode, settings.WindowTitle, style);
@@ -67,13 +75,13 @@ public class Window
         
         // TODO: this data needs to be recycled on a per scene basis
         float framesRendered = 0;
-        var fpsEntity = new Entity().AddComponent(new TextComponent("", "./Content/square.ttf", 24));
+        var fpsEntity = new Entity().AddComponent(new TextComponent("", "./SourceFiles/square.ttf", 24));
         fpsEntity.isMaster = true;
         fpsEntity.Tag = "FPS";
         GameStateManager.GetScreen().GameScene.AddEntity(fpsEntity);
         
         float lowestFPS = int.MaxValue;
-        var lowFPSEntity = new Entity().AddComponent(new TextComponent("", "./Content/square.ttf", 24));
+        var lowFPSEntity = new Entity().AddComponent(new TextComponent("", "./SourceFiles/square.ttf", 24));
         lowFPSEntity.Transform.Position.Y += 40;
         lowFPSEntity.isMaster = true;
         lowFPSEntity.Tag = "lowFPS";

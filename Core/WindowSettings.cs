@@ -10,6 +10,9 @@ public struct WindowSettings
     public bool ShowColliders;
     // This one is purely for demonstrating/comparing efficiency.
     public bool NaiveCollision;
+    
+    public uint BaseWindowHeight;
+    public uint BaseWindowWidth;
 
     public WindowSettings()
     {
@@ -20,6 +23,8 @@ public struct WindowSettings
         GlobalYOffset = 0;
         ShowColliders = false;
         NaiveCollision = false;
+        BaseWindowHeight = 1280;
+        BaseWindowWidth = 720;
     }
     
 }

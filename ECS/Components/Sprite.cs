@@ -3,6 +3,7 @@ using GramEngine.ECS;
 using SFML.System;
 using SFML.Graphics;
 using System.Numerics;
+using System.Drawing;
 
 namespace GramEngine.ECS.Components;
 
@@ -38,6 +39,19 @@ public class Sprite : Component, IRenderable
     public Sprite(string textureFilePath, bool centerOrigin = true)
     {
         this.texture = new Texture(textureFilePath);
+        // setting to point texture filtering (in future, have a sprite settings struct, like window)
+        this.texture.Smooth = false;
+        this.sfmlSprite = new SFML.Graphics.Sprite(texture);
+        this.Color = System.Drawing.Color.FromArgb(255, 255, 255);
+        if (centerOrigin)
+        {
+            this.Origin = new Vector2(Width / 2, Height / 2);
+        }
+    }
+
+    public Sprite(MemoryStream textureBitmap)
+    {
+        this.texture = new Texture(textureBitmap);
         // setting to point texture filtering (in future, have a sprite settings struct, like window)
         this.texture.Smooth = false;
         this.sfmlSprite = new SFML.Graphics.Sprite(texture);

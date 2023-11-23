@@ -35,6 +35,7 @@ public class Sound : Component
     {
         soundBuffer = new SoundBuffer(filename);
         sound = new SFML.Audio.Sound(soundBuffer);
+        sound.Attenuation = 0;
     }
     
     public override void Initialize()

@@ -82,6 +82,6 @@ public class Animation : Component
             frameProgress = (float)gameTime.TotalTime.TotalSeconds + Animations[state].FrameTime;
         }
 
-        parentSprite.sfmlSprite = new SFML.Graphics.Sprite(Animations[state].Frames[currFrame]);
+        parentSprite.sfmlSprite.Texture = Animations[state].Frames[currFrame];
     }
 }

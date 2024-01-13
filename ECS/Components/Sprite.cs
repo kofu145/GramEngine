@@ -45,7 +45,7 @@ public class Sprite : Component, IRenderable
         this.Color = System.Drawing.Color.FromArgb(255, 255, 255);
         if (centerOrigin)
         {
-            this.Origin = new Vector2(Width / 2, Height / 2);
+            Origin = new Vector2(Width / 2, Height / 2);
         }
     }
 
@@ -76,6 +76,7 @@ public class Sprite : Component, IRenderable
             sfmlVectorPos.Y + settings.GlobalYOffset
         );
         sfmlSprite.Rotation = Transform.Rotation.Z;
+        Origin = new Vector2(Width / 2, Height / 2);;
         sfmlSprite.Scale = Transform.Scale.ToSFMLVector();
         return sfmlSprite.Transform;
     }

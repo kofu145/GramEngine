@@ -1,41 +1,57 @@
-﻿using GramEngine.Core;
+﻿using System.Collections.Concurrent;
+using GramEngine.Core;
 using SFML.Audio;
 
 namespace GramEngine.ECS.Components;
 
 public class Sound : Component
 {
-    private SoundBuffer soundBuffer;
-    private SFML.Audio.Sound sound;
+    private ConcurrentDictionary<string, StoredSound> sounds;
+    public string CurrentSound;
+    
+    public Sound()
+    {
+        sounds = new ConcurrentDictionary<string, StoredSound>();
+    }
+    public Sound(string filename, string soundName)
+    {
+        sounds = new ConcurrentDictionary<string, StoredSound>();
+        var soundBuffer = new SoundBuffer(filename);
+        var sound = new SFML.Audio.Sound(soundBuffer);
+        //sound.Attenuation = 0;
+        CurrentSound = soundName;
+        sounds.TryAdd(soundName, new StoredSound(soundBuffer, sound));
+    }
+
+    public void AddSound(string filename, string soundName)
+    {
+        var soundBuffer = new SoundBuffer(filename);
+        var sound = new SFML.Audio.Sound(soundBuffer);
+        //sound.Attenuation = 0;
+        sounds.TryAdd(soundName, new StoredSound(soundBuffer, sound));
+    }
     
     public float Volume
     {
-        get => sound.Volume;
-        set => sound.Volume = value;
+        get => sounds[CurrentSound].sound.Volume;
+        set => sounds[CurrentSound].sound.Volume = value;
     }
     
     public float Attenuation
     {
-        get => sound.Attenuation;
-        set => sound.Attenuation = value;
+        get => sounds[CurrentSound].sound.Attenuation;
+        set => sounds[CurrentSound].sound.Attenuation = value;
     }
     public float Pitch
     {
-        get => sound.Pitch;
-        set => sound.Pitch = value;
+        get => sounds[CurrentSound].sound.Pitch;
+        set => sounds[CurrentSound].sound.Pitch = value;
     }
     
     public bool Loop
     {
-        get => sound.Loop;
-        set => sound.Loop = value;
-    }
-
-    public Sound(string filename)
-    {
-        soundBuffer = new SoundBuffer(filename);
-        sound = new SFML.Audio.Sound(soundBuffer);
-        sound.Attenuation = 0;
+        get => sounds[CurrentSound].sound.Loop;
+        set => sounds[CurrentSound].sound.Loop = value;
     }
     
     public override void Initialize()
@@ -45,8 +61,8 @@ public class Sound : Component
 
     public override void Dispose()
     {
-        sound.Dispose();
-        soundBuffer.Dispose();
+        sounds[CurrentSound].sound.Dispose();
+        sounds[CurrentSound].soundBuffer.Dispose();
     }
     
     public override void Update(GameTime gameTime)
@@ -56,17 +72,35 @@ public class Sound : Component
 
     public void Play()
     {
-        sound.Play();
+        sounds[CurrentSound].sound.Play();
+    }
+
+    public void Play(string soundName)
+    {
+        CurrentSound = soundName;
+        Play();
     }
 
     public void Pause()
     {
-        sound.Pause();
+        sounds[CurrentSound].sound.Pause();
     }
 
     public void Stop()
     {
-        sound.Stop();
+        sounds[CurrentSound].sound.Stop();
     }
-    
+
+    internal struct StoredSound
+    {
+        internal SoundBuffer soundBuffer;
+        internal SFML.Audio.Sound sound;
+
+        public StoredSound(SoundBuffer soundBuffer, SFML.Audio.Sound sound)
+        {
+            this.soundBuffer = soundBuffer;
+            this.sound = sound;
+        }
+    }
+
 }

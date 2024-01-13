@@ -5,7 +5,7 @@
 /// Mouse buttons
 /// </summary>
 ////////////////////////////////////////////////////////////
-public enum Button
+public enum MouseButton
 {
     /// <summary>The left mouse button</summary>
     Left,

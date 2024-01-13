@@ -17,18 +17,21 @@ public class Window
         get => windowTitle;
         set => window.SetTitle(windowTitle = value);
     }
-    private String windowTitle;
-    
+    public readonly WindowSettings settings;
+    public Vector2 CameraPosition;
+    public System.Drawing.Color BackgroundColor;
     public uint Width { get => window.Size.X; }
     public uint Height { get => window.Size.Y; }
+    public float Zoom;
 
+    private String windowTitle;
     private GameTime gameTime;
     private Styles style;
     private VideoMode mode;
     private View mainView;
-    private SFML.Graphics.RenderWindow window;
-    public readonly WindowSettings settings;
-    public Vector2 CameraPosition;
+    // internal thanks to InputManager, mouse coords needs relative
+    internal SFML.Graphics.RenderWindow window;
+
     
     public Window(IGameState initialGameState, WindowSettings settings)
     {
@@ -53,7 +56,9 @@ public class Window
         CameraPosition = new Vector2();
         mainView = new View(new FloatRect(CameraPosition.ToSFMLVector(),
             new Vector2f(settings.Width, settings.Height)));
+        mainView.Zoom(Zoom);
         window.SetView(getLetterboxView(mainView, window.Size.X, window.Size.Y));
+        BackgroundColor = System.Drawing.Color.Black;
         GameStateManager.AddScreen(initialGameState);
     }
 
@@ -107,11 +112,10 @@ public class Window
             // I hate we have to call to get current scene every frame lol
             var currentGameState = GameStateManager.GetScreen();
             var currentScene = currentGameState.GameScene;
-
             // Process events
             window.DispatchEvents();
             
-            window.Clear();
+            window.Clear(BackgroundColor.ToSFMLColor());
             
             currentScene.UpdateEntitiesList();
 
@@ -280,6 +284,7 @@ public class Window
             mainView = new View(new FloatRect(CameraPosition.ToSFMLVector(),
                 new Vector2f(settings.Width, settings.Height)));
             window.SetView(getLetterboxView(mainView, window.Size.X, window.Size.Y));
+            mainView.Zoom(Zoom);
 
             // Finally, display the rendered frame on screen
             window.Display();

@@ -14,7 +14,7 @@ public static class InputManager
         /// <summary>
         /// The current mouse position, relative to the window's 0, 0. (Top left corner)
         /// </summary>
-        public static Vector2 MousePos => ((Vector2f)Mouse.GetPosition()).ToSysNumVector();
+        public static Vector2 MousePos => ((Vector2f)Mouse.GetPosition(GameStateManager.Window.window)).ToSysNumVector();
         /// <summary>
         /// The difference in mouse position from the last frame.
         /// </summary>
@@ -34,6 +34,11 @@ public static class InputManager
         public static bool GetKeyPressed(Keys key)
         {
             return Keyboard.IsKeyPressed((Keyboard.Key)key);
+        }
+
+        public static bool GetMousePress(MouseButton mouseButton)
+        {
+            return Mouse.IsButtonPressed((Mouse.Button)mouseButton);
         }
         /*
         public bool GetKeyPressed(Keys key)

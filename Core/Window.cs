@@ -25,6 +25,7 @@ public class Window
     private GameTime gameTime;
     private Styles style;
     private VideoMode mode;
+    private View mainView;
     private SFML.Graphics.RenderWindow window;
     public readonly WindowSettings settings;
     public Vector2 CameraPosition;
@@ -50,7 +51,9 @@ public class Window
         mode = new SFML.Window.VideoMode(settings.Width, settings.Height);
         window = new SFML.Graphics.RenderWindow(mode, settings.WindowTitle, style);
         CameraPosition = new Vector2();
-        window.SetView(new View(new FloatRect(CameraPosition.ToSFMLVector(), new Vector2f(settings.Width, settings.Height))));
+        mainView = new View(new FloatRect(CameraPosition.ToSFMLVector(),
+            new Vector2f(settings.Width, settings.Height)));
+        window.SetView(mainView);
         GameStateManager.AddScreen(initialGameState);
     }
 
@@ -104,7 +107,6 @@ public class Window
             // I hate we have to call to get current scene every frame lol
             var currentGameState = GameStateManager.GetScreen();
             var currentScene = currentGameState.GameScene;
-            window.SetView(new View(new FloatRect(CameraPosition.ToSFMLVector(), new Vector2f(settings.Width, settings.Height))));
 
             // Process events
             window.DispatchEvents();
@@ -275,7 +277,8 @@ public class Window
             
             // do we even need this? everything is abstracted away anyway
             currentGameState.Draw();
-            
+            window.SetView(new View(new FloatRect(CameraPosition.ToSFMLVector(), new Vector2f(settings.Width, settings.Height))));
+
             // Finally, display the rendered frame on screen
             window.Display();
         }

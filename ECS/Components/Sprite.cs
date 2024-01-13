@@ -10,7 +10,7 @@ namespace GramEngine.ECS.Components;
 // Essentially a wrapper over SFML sprite
 public class Sprite : Component, IRenderable
 {
-    private Texture texture;
+    internal Texture texture;
     internal SFML.Graphics.Sprite sfmlSprite { get; set; }
     public int Width => Convert.ToInt32(this.texture.Size.X);
     public int Height => Convert.ToInt32(this.texture.Size.Y);

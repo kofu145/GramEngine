@@ -53,7 +53,7 @@ public class Window
         CameraPosition = new Vector2();
         mainView = new View(new FloatRect(CameraPosition.ToSFMLVector(),
             new Vector2f(settings.Width, settings.Height)));
-        window.SetView(mainView);
+        window.SetView(getLetterboxView(mainView, window.Size.X, window.Size.Y));
         GameStateManager.AddScreen(initialGameState);
     }
 
@@ -277,7 +277,7 @@ public class Window
             
             // do we even need this? everything is abstracted away anyway
             currentGameState.Draw();
-            window.SetView(new View(new FloatRect(CameraPosition.ToSFMLVector(), new Vector2f(settings.Width, settings.Height))));
+            window.SetView(getLetterboxView(mainView, window.Size.X, window.Size.Y));
 
             // Finally, display the rendered frame on screen
             window.Display();
@@ -299,7 +299,7 @@ public class Window
     private void Window_Resized(object sender, SFML.Window.SizeEventArgs e)
     {
         var window = (RenderWindow)sender;
-        window.SetView(getLetterboxView(window.GetView(), window.Size.X, window.Size.Y));
+        window.SetView(getLetterboxView(mainView, window.Size.X, window.Size.Y));
     }
 
     private void Window_Closed(object sender, EventArgs e)

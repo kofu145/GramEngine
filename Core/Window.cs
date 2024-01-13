@@ -277,6 +277,8 @@ public class Window
             
             // do we even need this? everything is abstracted away anyway
             currentGameState.Draw();
+            mainView = new View(new FloatRect(CameraPosition.ToSFMLVector(),
+                new Vector2f(settings.Width, settings.Height)));
             window.SetView(getLetterboxView(mainView, window.Size.X, window.Size.Y));
 
             // Finally, display the rendered frame on screen

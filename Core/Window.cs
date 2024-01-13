@@ -1,4 +1,5 @@
-﻿using GramEngine.ECS;
+﻿using System.Numerics;
+using GramEngine.ECS;
 using SFML.Graphics;
 using SFML.Window;
 using GramEngine.ECS.Components;
@@ -26,6 +27,7 @@ public class Window
     private VideoMode mode;
     private SFML.Graphics.RenderWindow window;
     public readonly WindowSettings settings;
+    public Vector2 CameraPosition;
     
     public Window(IGameState initialGameState, WindowSettings settings)
     {
@@ -43,11 +45,12 @@ public class Window
         {
             this.settings.BaseWindowHeight = settings.Height;
             this.settings.BaseWindowWidth = settings.Width;
-            Console.WriteLine(settings.BaseWindowHeight);
         }
         style = SFML.Window.Styles.Default;
         mode = new SFML.Window.VideoMode(settings.Width, settings.Height);
         window = new SFML.Graphics.RenderWindow(mode, settings.WindowTitle, style);
+        CameraPosition = new Vector2();
+        window.SetView(new View(new FloatRect(CameraPosition.ToSFMLVector(), new Vector2f(settings.Width, settings.Height))));
         GameStateManager.AddScreen(initialGameState);
     }
 
@@ -101,7 +104,8 @@ public class Window
             // I hate we have to call to get current scene every frame lol
             var currentGameState = GameStateManager.GetScreen();
             var currentScene = currentGameState.GameScene;
-            
+            window.SetView(new View(new FloatRect(CameraPosition.ToSFMLVector(), new Vector2f(settings.Width, settings.Height))));
+
             // Process events
             window.DispatchEvents();
             
@@ -240,7 +244,7 @@ public class Window
             {
                 var textComponent = entity.GetComponent<TextComponent>();
                 // shorthand for easy writing
-                var sfmlVectorPos = entity.Transform.Position.ToSFMLVector();
+                var sfmlVectorPos = (entity.Transform.Position + textComponent.TextOffset.ToVec3()).ToSFMLVector();
                 textComponent.text.Position = new Vector2f(sfmlVectorPos.X, sfmlVectorPos.Y);
                 textComponent.text.Rotation = entity.Transform.Rotation.Z;
                 textComponent.text.Scale = entity.Transform.Scale.ToSFMLVector();

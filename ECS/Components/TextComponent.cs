@@ -1,4 +1,5 @@
-﻿using GramEngine.Core;
+﻿using System.Numerics;
+using GramEngine.Core;
 using SFML.Graphics;
 using Color = System.Drawing.Color;
 
@@ -35,6 +36,7 @@ public class TextComponent : Component
 
     internal Text text;
     internal string fontPath;
+    public Vector2 TextOffset;
 
     public string Text
     {
@@ -70,10 +72,12 @@ public class TextComponent : Component
     {
         this.fontPath = fontPath;
         this.text = new Text(text, new Font(fontPath), (uint)size);
+        TextOffset = new Vector2();
     }
     
     public override void Initialize()
     {
+        
     }
 
     public override void Update(GameTime gameTime)

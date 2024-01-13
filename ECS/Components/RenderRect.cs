@@ -1,8 +1,8 @@
-﻿using SFML.Graphics;
-using System.Numerics;
+﻿using System.Numerics;
 using GramEngine.Core;
+using System.Drawing;
+using SFML.Graphics;
 using SFML.System;
-using Color = System.Drawing.Color;
 
 namespace GramEngine.ECS.Components;
 
@@ -12,13 +12,13 @@ public class RenderRect : Component, IRenderable
     Drawable IRenderable.GetRenderTarget() => GetRenderTarget();
 
 
-    public Color FillColor
+    public System.Drawing.Color FillColor
     {
         get => rectangleShape.FillColor.ToSysColor();
         set => rectangleShape.FillColor = value.ToSFMLColor();
     }
 
-    public Color OutlineColor
+    public System.Drawing.Color OutlineColor
     {
         get => rectangleShape.OutlineColor.ToSysColor();
         set => rectangleShape.OutlineColor = value.ToSFMLColor();
@@ -68,7 +68,7 @@ public class RenderRect : Component, IRenderable
             sfmlVectorPos.Y + settings.GlobalYOffset
         );
         rectangleShape.Rotation = Transform.Rotation.Z;
-        rectangleShape.Scale = Transform.Scale.ToSFMLVector();
+        //rectangleShape.Scale = Transform.Scale.ToSFMLVector();
         rectangleShape.Draw(window, new RenderStates(rectangleShape.Transform));
     }
 

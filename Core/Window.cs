@@ -78,14 +78,16 @@ public class Window
         var fpsEntity = new Entity().AddComponent(new TextComponent("", "./SourceFiles/square.ttf", 24));
         fpsEntity.isMaster = true;
         fpsEntity.Tag = "FPS";
-        GameStateManager.GetScreen().GameScene.AddEntity(fpsEntity);
+        if (settings.ShowFPS)
+            GameStateManager.GetScreen().GameScene.AddEntity(fpsEntity);
         
         float lowestFPS = int.MaxValue;
         var lowFPSEntity = new Entity().AddComponent(new TextComponent("", "./SourceFiles/square.ttf", 24));
         lowFPSEntity.Transform.Position.Y += 40;
         lowFPSEntity.isMaster = true;
         lowFPSEntity.Tag = "lowFPS";
-        GameStateManager.GetScreen().GameScene.AddEntity(lowFPSEntity);
+        if (settings.ShowFPS)
+            GameStateManager.GetScreen().GameScene.AddEntity(lowFPSEntity);
 
         if (!settings.NaiveCollision)
         {
@@ -116,23 +118,26 @@ public class Window
                 .Where(e => e.HasComponent<ECS.Components.TextComponent>());
 
             // TODO: update all new scenes with FPS entity if enabled
-            fpsEntity = currentScene.FindMasterEntityWithTag("FPS");
-            lowFPSEntity = currentScene.FindMasterEntityWithTag("lowFPS");
-            // small fps calc
-            framesRendered++;
-            if ((DateTime.Now - lastTime).TotalSeconds >= 1)
+            if (settings.ShowFPS)
             {
-                var fps = framesRendered;
-                framesRendered = 0;
-                lastTime = DateTime.Now;
-                //Console.WriteLine(fps);
-                fpsEntity.GetComponent<TextComponent>().Text = "FPS: " + fps.ToString();
-                if (fps < lowestFPS && fps > 10)
+                fpsEntity = currentScene.FindMasterEntityWithTag("FPS");
+                lowFPSEntity = currentScene.FindMasterEntityWithTag("lowFPS");
+                // small fps calc
+                framesRendered++;
+                if ((DateTime.Now - lastTime).TotalSeconds >= 1)
                 {
-                    lowestFPS = fps;
-                    lowFPSEntity.GetComponent<TextComponent>().Text = "Lowest FPS: " + lowestFPS.ToString();
-                }
+                    var fps = framesRendered;
+                    framesRendered = 0;
+                    lastTime = DateTime.Now;
+                    //Console.WriteLine(fps);
+                    fpsEntity.GetComponent<TextComponent>().Text = "FPS: " + fps.ToString();
+                    if (fps < lowestFPS && fps > 10)
+                    {
+                        lowestFPS = fps;
+                        lowFPSEntity.GetComponent<TextComponent>().Text = "Lowest FPS: " + lowestFPS.ToString();
+                    }
                 
+                }
             }
             //lowFPSEntity.GetComponent<TextComponent>().Text = "entities: " + currentScene.Entities.Count;
 
@@ -203,7 +208,7 @@ public class Window
                         sfmlVectorPos.Y + settings.GlobalYOffset
                     );
                     rect.rectangleShape.Rotation = entity.Transform.Rotation.Z;
-                    rect.rectangleShape.Scale = entity.Transform.Scale.ToSFMLVector();
+                    //rect.rectangleShape.Scale = entity.Transform.Scale.ToSFMLVector();
                 
                     if (rect.Enabled)
                         // for z ordering, sort along 

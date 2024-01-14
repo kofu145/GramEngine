@@ -15,6 +15,9 @@ public static class InputManager
         /// The current mouse position, relative to the window's 0, 0. (Top left corner)
         /// </summary>
         public static Vector2 MousePos => ((Vector2f)Mouse.GetPosition(GameStateManager.Window.window)).ToSysNumVector();
+        
+        public static Vector2 MouseWorldPos => 
+            GameStateManager.Window.window.MapPixelToCoords(Mouse.GetPosition(GameStateManager.Window.window)).ToSysNumVector();
         /// <summary>
         /// The difference in mouse position from the last frame.
         /// </summary>

@@ -36,7 +36,7 @@ public class Button : Component
     public override void Update(GameTime gameTime)
     {
         var pos = ParentEntity.Transform.Position;
-        Vector2 mousePos = InputManager.MousePos;
+        Vector2 mousePos = InputManager.MouseWorldPos;
         // check if mouse in bounds
         if (mousePos.X > pos.X - (float)Width / 2 && mousePos.X < pos.X + Width &&
             mousePos.Y > pos.Y - (float)Height / 2 && mousePos.Y < pos.Y + Height)

@@ -181,7 +181,6 @@ internal class CircleColliderSystem : Component
 
                 var distToMove = c1.Radius + c2.Radius - distBetweenCircles;
                 // do moving circle collision (reposition circle accordingly)
-
                 if (!c1.Dynamic && !c2.Dynamic)
                 {
                     // static static collision
@@ -190,17 +189,17 @@ internal class CircleColliderSystem : Component
                 if (c1.Dynamic)
                 {
                     
-
                     if (!c2.Dynamic)
                     {
                         // move the collider to match bounds
-                        Transform.Position.X -= (float)(Math.Cos(angle) * distToMove);
-                        Transform.Position.Y -= (float)(Math.Sin(angle) * distToMove);
+                        e1T.Position.X -= (float)(Math.Cos(angle) * distToMove);
+                        e1T.Position.Y -= (float)(Math.Sin(angle) * distToMove);
                         c1.IsColliding = false;
                         c2.IsColliding = false;
                     }
                     else
                     {
+
                         // move the collider to match bounds
                         e2T.Position.X += (float)(Math.Cos(angle) * distToMove);
                         e2T.Position.Y += (float)(Math.Sin(angle) * distToMove);

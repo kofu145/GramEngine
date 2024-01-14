@@ -102,7 +102,7 @@ public class Window
 
         if (!settings.NaiveCollision)
         {
-            var circleCollisionManager = new Entity().AddComponent(new CircleColliderSystem(30));
+            var circleCollisionManager = new Entity().AddComponent(new CircleColliderSystem(100));
             GameStateManager.GetScreen().GameScene.AddEntity(circleCollisionManager);
         }
 

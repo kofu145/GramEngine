@@ -83,5 +83,8 @@ public class Animation : Component
         }
 
         parentSprite.sfmlSprite.Texture = Animations[state].Frames[currFrame];
+        parentSprite.sfmlSprite.TextureRect = new IntRect(0, 0,
+            (int)Animations[state].Frames[currFrame].Size.X,
+            (int)Animations[state].Frames[currFrame].Size.Y);
     }
 }

@@ -33,7 +33,7 @@ public abstract class GameState : IGameState
     /// </summary>
     public virtual void Initialize()
     {
-        
+        GameScene.UpdateEntitiesList();
     }
 
     /// <summary>

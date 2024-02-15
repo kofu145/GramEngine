@@ -50,6 +50,7 @@ public static class GameStateManager
             catch (Exception e)
             {
                 Console.WriteLine(e.Message);
+                Console.WriteLine(e.StackTrace);
             }
         }
         /// <summary>
@@ -65,6 +66,8 @@ public static class GameStateManager
             catch (Exception e)
             {
                 Console.WriteLine(e.Message);
+                Console.WriteLine(e.StackTrace);
+
             }
             return null;
         }
@@ -83,6 +86,8 @@ public static class GameStateManager
                 catch (Exception e)
                 {
                     Console.WriteLine(e.Message);
+                    Console.WriteLine(e.StackTrace);
+
                 }
             }
         }

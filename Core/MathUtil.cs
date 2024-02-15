@@ -13,6 +13,11 @@ public class MathUtil
     {
         return new Vector2(Lerp(v1.X, v2.X, t), Lerp(v1.Y, v2.Y, t));
     }
+    
+    public static Vector3 Lerp(Vector3 v1, Vector3 v2, float t)
+    {
+        return new Vector3(Lerp(v1.X, v2.X, t), Lerp(v1.Y, v2.Y, t), Lerp(v1.Z, v2.Z, t));
+    }
 
     public static float RadToDeg(float radians)
     {

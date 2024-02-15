@@ -38,8 +38,8 @@ public class Button : Component
         var pos = ParentEntity.Transform.Position;
         Vector2 mousePos = InputManager.MouseWorldPos;
         // check if mouse in bounds
-        if (mousePos.X > pos.X - (float)Width / 2 && mousePos.X < pos.X + Width &&
-            mousePos.Y > pos.Y - (float)Height / 2 && mousePos.Y < pos.Y + Height)
+        if (mousePos.X > pos.X && mousePos.X < pos.X + Width &&
+            mousePos.Y > pos.Y && mousePos.Y < pos.Y + Height)
         {
             // set to hovered if in bounds and not already hovered
             if (!isHovered)

@@ -11,15 +11,42 @@ public class Animation : Component
     private int currFrame = 0;
     private float frameProgress = 0;
     private Sprite parentSprite;
+    private bool loop = true;
+    private bool particle = false;
+    private bool paused = false;
+    public bool Complete{
+        get => currFrame >= Animations[state].Frames.Count-1 && !loop; 
+    }
+
+    public bool ResetOnFinish = false;
     
-    public Animation()
+    public Animation(bool particle = false)
     {
+        this.particle = particle;
         Animations = new ConcurrentDictionary<string, FrameData>();
         
     }
 
-    public void SetState(string state)
+    public void Play()
     {
+        currFrame = 0;
+        paused = false;
+    }
+
+    public void Pause()
+    {
+        paused = true;
+    }
+
+    public void Reset()
+    {
+        currFrame = 0;
+        paused = true;
+    }
+
+    public void SetState(string state, bool loop = true)
+    {
+        this.loop = loop;
         if (this.state != state)
         {
             this.state = state;
@@ -74,10 +101,20 @@ public class Animation : Component
 
         if (gameTime.TotalTime.TotalSeconds > frameProgress)
         {
-            if (currFrame >= Animations[state].Frames.Count-1)
+            if (currFrame >= Animations[state].Frames.Count-1 && loop)
                 currFrame = 0;
-            else
+            else if (currFrame >= Animations[state].Frames.Count - 1 && !loop)
+            {
+                if (particle)
+                    ParentScene.DestroyEntity(ParentEntity);
+            }
+            else if (!paused)
                 currFrame++;
+            if (currFrame >= Animations[state].Frames.Count-1 && ResetOnFinish)
+            {
+                paused = true;
+                currFrame = 0;
+            }
             
             frameProgress = (float)gameTime.TotalTime.TotalSeconds + Animations[state].FrameTime;
         }

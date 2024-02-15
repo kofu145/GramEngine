@@ -1,4 +1,5 @@
 ﻿using System.Numerics;
+using GramEngine.Core.Input;
 using GramEngine.ECS;
 using SFML.Graphics;
 using SFML.Window;
@@ -67,6 +68,7 @@ public class Window
     {
         
         window.KeyPressed += Window_KeyPressed;
+        window.KeyReleased += Window_KeyReleased;
         window.Resized += Window_Resized;
         window.Closed += Window_Closed;
         
@@ -301,6 +303,23 @@ public class Window
         {
             window.Close();
         }*/
+
+    }
+    
+    /// <summary>
+    /// Function called when key released
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void Window_KeyReleased(object sender, SFML.Window.KeyEventArgs e)
+    {
+        var window = (SFML.Window.Window)sender;
+        /*if (e.Code == Keyboard.Key.Escape)
+        {
+            window.Close();
+        }*/
+
+        
     }
 
     private void Window_Resized(object sender, SFML.Window.SizeEventArgs e)

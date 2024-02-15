@@ -111,14 +111,14 @@ public class CircleCollider : Component
                             Transform.Position.Y -= (float)(Math.Sin(angle) * distToMove);
                             IsColliding = false;
                         }
-                        else
+                        /*else
                         {
                             // move the collider to match bounds
                             otherTransform.Position.X += (float)(Math.Cos(angle) * distToMove);
                             otherTransform.Position.Y += (float)(Math.Sin(angle) * distToMove);
                             IsColliding = false;
 
-                        }
+                        }*/
                     }
                 }
                 if (!IsColliding && wasColliding)

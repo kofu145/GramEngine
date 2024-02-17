@@ -9,6 +9,7 @@ public static class GameStateManager
         public static Window Window { get; internal set; }
         
         public static GameTime GameTime { get; internal set; }
+        public static SceneTransition TransitionEffect { get; internal set; }
         
         // I've kind of realized that the singleton pattern here is mostly pointless? So I'm changing it to a
         // static class instead.
@@ -38,14 +39,28 @@ public static class GameStateManager
         {
             try
             {
-                // add screen to the stack
-                screens.Push(screen);
-                /*
-                if (content != null)
+                if (TransitionEffect != SceneTransition.None && screens.Count != 0)
                 {
-                    screens.Peek().LoadContent(content);
-                }*/
-                screens.Peek().Initialize();
+                    Window.SetTransitionEffect(SceneTransition.FadeIn);
+                    Window.MidTransition handler = null;
+                    handler = () => {
+                        Window.OnMidTransition -= handler;
+                        screens.Push(screen);
+                        screens.Peek().Initialize();
+                    };
+                    Window.OnMidTransition += handler;
+                }
+                else
+                {
+                    // add screen to the stack
+                    screens.Push(screen);
+                    /*
+                    if (content != null)
+                    {
+                        screens.Peek().LoadContent(content);
+                    }*/
+                    screens.Peek().Initialize();
+                }
             }
             catch (Exception e)
             {
@@ -159,5 +174,10 @@ public static class GameStateManager
             {
                 state.Dispose();
             }
+        }
+
+        public static void SetSceneTransition(SceneTransition transition)
+        {
+            TransitionEffect = transition;
         }
     }

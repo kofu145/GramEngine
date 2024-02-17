@@ -5,6 +5,7 @@ using SFML.Graphics;
 using SFML.Window;
 using GramEngine.ECS.Components;
 using SFML.System;
+using Transform = GramEngine.ECS.Transform;
 
 namespace GramEngine.Core;
 
@@ -25,11 +26,20 @@ public class Window
     public uint Height { get => window.Size.Y; }
     public float Zoom;
 
+    public event MidTransition OnMidTransition;
+    public delegate void MidTransition();
+
     private String windowTitle;
     private GameTime gameTime;
     private Styles style;
     private VideoMode mode;
     private View mainView;
+    private SceneTransition transition;
+
+
+    private double transitionTimer;
+
+    private double transitionTarget;
     // internal thanks to InputManager, mouse coords needs relative
     internal SFML.Graphics.RenderWindow window;
 
@@ -60,7 +70,17 @@ public class Window
         mainView.Zoom(Zoom);
         window.SetView(getLetterboxView(mainView, window.Size.X, window.Size.Y));
         BackgroundColor = System.Drawing.Color.Black;
+
+        transition = SceneTransition.None;
+        transitionTimer = 0;
         GameStateManager.AddScreen(initialGameState);
+    }
+
+    public void SetTransitionEffect(SceneTransition transition)
+    {
+        this.transition = transition;
+        transitionTimer = 0;
+        transitionTarget = .2;
     }
 
     
@@ -116,14 +136,14 @@ public class Window
             var currentScene = currentGameState.GameScene;
             // Process events
             window.DispatchEvents();
-            
+            gameTime.UpdateTime();
             window.Clear(BackgroundColor.ToSFMLColor());
+
             
             currentScene.UpdateEntitiesList();
 
             currentGameState.Update(gameTime);
             // may be more delay from onload to now vs between frames?
-            gameTime.UpdateTime();
             //Console.WriteLine(gameTime.DeltaTime);
             
             var textEntities = currentScene.EntitiesAndMaster
@@ -155,13 +175,88 @@ public class Window
 
             currentScene.UpdateEntities(gameTime);
 
-            var renderableEntities = currentScene.EntitiesAndMaster
+            Render(currentScene);
+            
+            // do we even need this? everything is abstracted away anyway
+            currentGameState.Draw();
+            mainView = new View(new FloatRect(CameraPosition.ToSFMLVector(),
+                new Vector2f(settings.Width, settings.Height)));
+            window.SetView(getLetterboxView(mainView, window.Size.X, window.Size.Y));
+            mainView.Zoom(Zoom);
+
+            
+            // Scene Transition!
+            if (transition != SceneTransition.None)
+            {
+                switch (transition)
+                {
+                    case SceneTransition.FadeIn:
+                        Console.WriteLine(transitionTimer);
+                        Console.WriteLine((float)(transitionTimer / transitionTarget));
+
+                        RectangleShape fade = new RectangleShape();
+                        fade.Size = new Vector2f(window.Size.X, window.Size.Y);
+                        int currentAlpha = 0;
+                        transitionTimer += gameTime.DeltaTime;
+                        Console.WriteLine((float)(transitionTarget));
+
+                        if (transitionTimer >= transitionTarget)
+                        {
+                            OnMidTransition?.Invoke();
+                            SetTransitionEffect(SceneTransition.FadeOut);
+                        }
+                        else
+                        {
+                            currentAlpha = (int)MathUtil.Lerp(0, 255,
+                                transitionTimer / transitionTarget);
+                        }
+                        Console.WriteLine(currentAlpha);
+                        fade.FillColor = new Color(0, 0, 0, (byte)currentAlpha);
+
+
+                        window.Draw(fade);
+
+                        break;
+                    case SceneTransition.FadeOut:
+
+                         fade = new RectangleShape();
+                        fade.Size = new Vector2f(window.Size.X, window.Size.Y);
+                        currentAlpha = 0;
+                        transitionTimer += gameTime.DeltaTime;
+
+                        if (transitionTimer >= transitionTarget)
+                        {
+                            transition = SceneTransition.None;
+                        }
+                        else
+                        {
+                            currentAlpha = (int)MathUtil.Lerp(255, 0,
+                                transitionTimer / transitionTarget);
+                        }
+                        fade.FillColor = new Color(0, 0, 0, (byte)currentAlpha);
+                        
+
+                        window.Draw(fade);
+
+                        break;
+                }
+            }
+            // Finally, display the rendered frame on screen
+            window.Display();
+        }
+    }
+
+    private void Render(Scene currentScene)
+    {
+        var renderableEntities = currentScene.EntitiesAndMaster
                 .Where(e => 
                     e.HasComponent<ECS.Components.Sprite>() ||
                     e.HasComponent<RenderRect>() ||
                     e.HasComponent<RenderCircle>()
                 ).OrderBy(entity => entity.Transform.Position.Z);
-            
+        var textEntities = currentScene.EntitiesAndMaster
+            .Where(e => e.HasComponent<ECS.Components.TextComponent>());
+        
             foreach (var entity in renderableEntities)
             {
                 // this cleaner implementation here is super buggy and weird, maybe will actually try to get it working
@@ -280,17 +375,6 @@ public class Window
                     window.Draw(circleCollider.circleShape);                  
                 }
             }
-            
-            // do we even need this? everything is abstracted away anyway
-            currentGameState.Draw();
-            mainView = new View(new FloatRect(CameraPosition.ToSFMLVector(),
-                new Vector2f(settings.Width, settings.Height)));
-            window.SetView(getLetterboxView(mainView, window.Size.X, window.Size.Y));
-            mainView.Zoom(Zoom);
-
-            // Finally, display the rendered frame on screen
-            window.Display();
-        }
     }
 
     /// <summary>
@@ -332,6 +416,7 @@ public class Window
     {
         // TODO: Should be calling Dispose() methods here
         RenderWindow window = (RenderWindow)sender;
+        GameStateManager.Dispose();
         window.Close();
     }
 

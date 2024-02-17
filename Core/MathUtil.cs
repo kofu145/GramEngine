@@ -8,6 +8,11 @@ public class MathUtil
     {
         return p1 * (1 - t) + p2 * t;
     }
+    
+    public static double Lerp(double p1, double p2, double t)
+    {
+        return p1 * (1 - t) + p2 * t;
+    }
 
     public static Vector2 Lerp(Vector2 v1, Vector2 v2, float t)
     {

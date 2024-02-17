@@ -10,12 +10,12 @@ public class Sound : Component
     public string CurrentSound;
     public float GlobalVolume;
     
-    public Sound()
+    public Sound(float globalVolume = 20)
     {
         sounds = new ConcurrentDictionary<string, StoredSound>();
-        GlobalVolume = 50;
+        GlobalVolume = globalVolume;
     }
-    public Sound(string filename, string soundName)
+    public Sound(string filename, string soundName, float globalVolume = 20)
     {
         sounds = new ConcurrentDictionary<string, StoredSound>();
         var soundBuffer = new SoundBuffer(filename);
@@ -23,7 +23,7 @@ public class Sound : Component
         //sound.Attenuation = 0;
         CurrentSound = soundName;
         sounds.TryAdd(soundName, new StoredSound(soundBuffer, sound));
-        GlobalVolume = 50;
+        GlobalVolume = globalVolume;
     }
 
     public void AddSound(string filename, string soundName)

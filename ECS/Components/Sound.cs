@@ -8,10 +8,12 @@ public class Sound : Component
 {
     private ConcurrentDictionary<string, StoredSound> sounds;
     public string CurrentSound;
+    public float GlobalVolume;
     
     public Sound()
     {
         sounds = new ConcurrentDictionary<string, StoredSound>();
+        GlobalVolume = 50;
     }
     public Sound(string filename, string soundName)
     {
@@ -21,6 +23,7 @@ public class Sound : Component
         //sound.Attenuation = 0;
         CurrentSound = soundName;
         sounds.TryAdd(soundName, new StoredSound(soundBuffer, sound));
+        GlobalVolume = 50;
     }
 
     public void AddSound(string filename, string soundName)
@@ -61,8 +64,11 @@ public class Sound : Component
 
     public override void Dispose()
     {
-        sounds[CurrentSound].sound.Dispose();
-        sounds[CurrentSound].soundBuffer.Dispose();
+        foreach (var sound in sounds.Values)
+        {
+            sound.sound.Dispose();
+            sound.soundBuffer.Dispose();
+        }
     }
     
     public override void Update(GameTime gameTime)
@@ -72,6 +78,7 @@ public class Sound : Component
 
     public void Play()
     {
+        Volume = GlobalVolume;
         sounds[CurrentSound].sound.Play();
     }
 

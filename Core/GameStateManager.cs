@@ -68,6 +68,33 @@ public static class GameStateManager
                 Console.WriteLine(e.StackTrace);
             }
         }
+        
+        /// <summary>
+        /// Adds a screen to the top of the stack.
+        /// </summary>
+        /// <param name="screen">The GameState to push to the top of the stack.</param>
+        private static void AddScreenNoTransition(IGameState screen)
+        {
+            try
+            {
+                    // add screen to the stack
+                    screens.Push(screen);
+                    /*
+                    if (content != null)
+                    {
+                        screens.Peek().LoadContent(content);
+                    }*/
+                    screens.Peek().Initialize();
+                
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                Console.WriteLine(e.StackTrace);
+            }
+        }
+        
+        
         /// <summary>
         /// Returns the current rendering screen at the top of the stack.
         /// </summary>
@@ -113,8 +140,28 @@ public static class GameStateManager
         /// <param name="screen"></param>
         public static void SwapScreen(IGameState screen)
         {
-            RemoveScreen();
-            AddScreen(screen);
+            if (TransitionEffect != SceneTransition.None && screens.Count != 0)
+            {
+                Window.SetTransitionEffect(SceneTransition.FadeIn);
+                Window.MidTransition handler = null;
+                handler = () => {
+                    Window.OnMidTransition -= handler;
+                    RemoveScreen();
+                    AddScreenNoTransition(screen);
+                };
+                Window.OnMidTransition += handler;
+            }
+            else
+            {
+                // add screen to the stack
+                screens.Push(screen);
+                /*
+                if (content != null)
+                {
+                    screens.Peek().LoadContent(content);
+                }*/
+                screens.Peek().Initialize();
+            }
         }
 
         /// <summary>

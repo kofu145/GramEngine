@@ -80,7 +80,7 @@ public class Window
     {
         this.transition = transition;
         transitionTimer = 0;
-        transitionTarget = .2;
+        transitionTarget = .3;
     }
 
     
@@ -191,26 +191,23 @@ public class Window
                 switch (transition)
                 {
                     case SceneTransition.FadeIn:
-                        Console.WriteLine(transitionTimer);
-                        Console.WriteLine((float)(transitionTimer / transitionTarget));
 
                         RectangleShape fade = new RectangleShape();
                         fade.Size = new Vector2f(window.Size.X, window.Size.Y);
-                        int currentAlpha = 0;
+                        double currentAlpha = 0;
                         transitionTimer += gameTime.DeltaTime;
-                        Console.WriteLine((float)(transitionTarget));
 
                         if (transitionTimer >= transitionTarget)
                         {
+                            currentAlpha = 255;
                             OnMidTransition?.Invoke();
                             SetTransitionEffect(SceneTransition.FadeOut);
                         }
                         else
                         {
-                            currentAlpha = (int)MathUtil.Lerp(0, 255,
+                            currentAlpha = MathUtil.Lerp(0, 255,
                                 transitionTimer / transitionTarget);
                         }
-                        Console.WriteLine(currentAlpha);
                         fade.FillColor = new Color(0, 0, 0, (byte)currentAlpha);
 
 
@@ -219,7 +216,7 @@ public class Window
                         break;
                     case SceneTransition.FadeOut:
 
-                         fade = new RectangleShape();
+                        fade = new RectangleShape();
                         fade.Size = new Vector2f(window.Size.X, window.Size.Y);
                         currentAlpha = 0;
                         transitionTimer += gameTime.DeltaTime;
@@ -230,12 +227,11 @@ public class Window
                         }
                         else
                         {
-                            currentAlpha = (int)MathUtil.Lerp(255, 0,
+                            currentAlpha = MathUtil.Lerp(255, 0,
                                 transitionTimer / transitionTarget);
                         }
                         fade.FillColor = new Color(0, 0, 0, (byte)currentAlpha);
                         
-
                         window.Draw(fade);
 
                         break;

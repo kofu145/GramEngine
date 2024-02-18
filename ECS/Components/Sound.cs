@@ -9,6 +9,11 @@ public class Sound : Component
     private ConcurrentDictionary<string, StoredSound> sounds;
     public string CurrentSound;
     public float GlobalVolume;
+
+    public bool isPlaying
+    {
+        get => sounds[CurrentSound].sound.Status == SoundStatus.Playing;
+    }
     
     public Sound(float globalVolume = 20)
     {
@@ -66,6 +71,7 @@ public class Sound : Component
     {
         foreach (var sound in sounds.Values)
         {
+            sound.sound.Stop();
             sound.sound.Dispose();
             sound.soundBuffer.Dispose();
         }

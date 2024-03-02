@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Runtime.InteropServices;
 
 namespace GramEngine.Core;
 
@@ -43,7 +44,10 @@ public class GameTime
     internal void UpdateTime()
     {
         deltaTime = stopwatch.Elapsed;
-        DeltaTime = (float)((double)stopwatch.Elapsed.Ticks / Stopwatch.Frequency);
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            DeltaTime = (float)((double)stopwatch.Elapsed.Ticks / Stopwatch.Frequency);
+        else
+            DeltaTime = (float)((double)stopwatch.ElapsedTicks / Stopwatch.Frequency);
         TotalTime += deltaTime;
         stopwatch.Restart();
     }

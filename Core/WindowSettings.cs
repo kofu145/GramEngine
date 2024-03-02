@@ -14,6 +14,7 @@ public struct WindowSettings
     
     public uint BaseWindowHeight;
     public uint BaseWindowWidth;
+    public bool SpriteCulling;
 
     public WindowSettings()
     {
@@ -27,6 +28,7 @@ public struct WindowSettings
         BaseWindowHeight = 1280;
         BaseWindowWidth = 720;
         ShowFPS = false;
+        SpriteCulling = false;
     }
     
 }

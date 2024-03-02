@@ -31,6 +31,19 @@ public class Sprite : Component, IRenderable
     public bool Enabled = true;
 
     private bool centerOrigin;
+
+    internal Sprite(Texture texture, bool centerOrigin = true)
+    {
+        this.texture = texture;
+        // setting to point texture filtering (in future, have a sprite settings struct, like window)
+        this.texture.Smooth = false;
+        this.sfmlSprite = new SFML.Graphics.Sprite(texture);
+        this.Color = System.Drawing.Color.FromArgb(255, 255, 255);
+        if (centerOrigin)
+        {
+            Origin = new Vector2(Width / 2, Height / 2);
+        }
+    }
     
     /// <summary>
     /// Creates a new sprite component. Origin is automatically centered.
@@ -62,11 +75,12 @@ public class Sprite : Component, IRenderable
         }
     }
 
-    public SFML.Graphics.Sprite GetRenderTarget()
+    private SFML.Graphics.Sprite GetRenderTarget()
     {
         return sfmlSprite;
     }
 
+    // TODO: update all of these + other renderables to "UpdateTransform" or something of the like
     public SFML.Graphics.Transform GetTransformTarget()
     {
         var settings = GameStateManager.Window.settings;

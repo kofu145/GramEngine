@@ -35,6 +35,7 @@ public class Window
     private VideoMode mode;
     private View mainView;
     private SceneTransition transition;
+    internal List<DisplayFrame> displayFrames;
 
 
     private double transitionTimer;
@@ -70,6 +71,7 @@ public class Window
         mainView.Zoom(Zoom);
         window.SetView(getLetterboxView(mainView, window.Size.X, window.Size.Y));
         BackgroundColor = System.Drawing.Color.Black;
+        displayFrames = new List<DisplayFrame>();
 
         transition = SceneTransition.None;
         transitionTimer = 0;
@@ -241,6 +243,12 @@ public class Window
                         break;
                 }
             }
+
+            foreach (var frame in displayFrames)
+            {
+                window.Draw(frame.GetRenderTarget());
+            }
+            
             // Finally, display the rendered frame on screen
             window.Display();
         }
@@ -297,9 +305,15 @@ public class Window
 
                     if (sprite.Enabled)
                     {
-                        
-                        // for z ordering, sort along 
-                        window.Draw(sprite.sfmlSprite);
+                        if (settings.SpriteCulling && 
+                            entity.Transform.Position.X > -10 && entity.Transform.Position.X < window.Size.X + 10 &&
+                            entity.Transform.Position.Y > -10 && entity.Transform.Position.Y < window.Size.Y + 10) 
+                            window.Draw(sprite.sfmlSprite);
+                        else
+                        {
+                            window.Draw(sprite.sfmlSprite);
+
+                        }
                     }
                 }
                 

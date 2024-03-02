@@ -28,6 +28,6 @@ public class Rigidbody : Component
         if (moveWithRotation)
             ParentEntity.Transform.Rotation = new Vector3(0, 0, MathUtil.RadToDeg((float)Math.Atan2(Velocity.Y, Velocity.X))+90);
 
-        ParentEntity.Transform.Position += Velocity * (float)gameTime.DeltaTime;
+        ParentEntity.Transform.Position += Velocity * gameTime.DeltaTime;
     }
 }

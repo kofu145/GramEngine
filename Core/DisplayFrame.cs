@@ -64,4 +64,9 @@ public class DisplayFrame
         display.Scale = Transform.Scale.ToSFMLVector();
         return display;
     }
+
+    public void Dispose()
+    {
+        frame.Dispose();
+    }
 }

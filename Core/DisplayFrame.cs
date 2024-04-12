@@ -43,6 +43,12 @@ public class DisplayFrame
         frame.Clear();
     }
     
+    public Sprite GetSpriteComponent()
+    {
+        frame.Display();
+        return new Sprite(frame.Texture);
+    }
+    
     internal void RenderTexture(Texture texture, Vector3 displayPosition)
     {
         var renderTarget = new SFML.Graphics.Sprite(texture);

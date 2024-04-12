@@ -40,7 +40,7 @@ namespace GramEngine.ECS;
         /// </summary>
         public string Tag { get; set; }
         
-        internal bool isMaster { get; set; } = false;
+        internal bool isUIEntity { get; set; } = false;
 
         /// <summary>
         /// Initializes a new entity.

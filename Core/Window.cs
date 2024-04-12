@@ -111,7 +111,7 @@ public class Window
         // TODO: this data needs to be recycled on a per scene basis
         float framesRendered = 0;
         var fpsEntity = new Entity().AddComponent(new TextComponent("", "./SourceFiles/square.ttf", 24));
-        fpsEntity.isMaster = true;
+        fpsEntity.isUIEntity = true;
         fpsEntity.Tag = "FPS";
         if (settings.ShowFPS)
             GameStateManager.GetScreen().GameScene.AddEntity(fpsEntity);
@@ -119,7 +119,7 @@ public class Window
         float lowestFPS = int.MaxValue;
         var lowFPSEntity = new Entity().AddComponent(new TextComponent("", "./SourceFiles/square.ttf", 24));
         lowFPSEntity.Transform.Position.Y += 40;
-        lowFPSEntity.isMaster = true;
+        lowFPSEntity.isUIEntity = true;
         lowFPSEntity.Tag = "lowFPS";
         if (settings.ShowFPS)
             GameStateManager.GetScreen().GameScene.AddEntity(lowFPSEntity);
@@ -148,14 +148,14 @@ public class Window
             // may be more delay from onload to now vs between frames?
             //Console.WriteLine(gameTime.DeltaTime);
             
-            var textEntities = currentScene.EntitiesAndMaster
+            var textEntities = currentScene.EntitiesAndUIEntities
                 .Where(e => e.HasComponent<ECS.Components.TextComponent>());
 
             // TODO: update all new scenes with FPS entity if enabled
             if (settings.ShowFPS)
             {
-                fpsEntity = currentScene.FindMasterEntityWithTag("FPS");
-                lowFPSEntity = currentScene.FindMasterEntityWithTag("lowFPS");
+                fpsEntity = currentScene.FindUIEntityWithTag("FPS");
+                lowFPSEntity = currentScene.FindUIEntityWithTag("lowFPS");
                 // small fps calc
                 framesRendered++;
                 if ((DateTime.Now - lastTime).TotalSeconds >= 1)
@@ -242,9 +242,11 @@ public class Window
 
             foreach (var frame in displayFrames)
             {
-                window.Draw(frame.GetRenderTarget());
+                var toRender = frame.GetRenderTarget();
+                window.Draw(toRender);
+                toRender.Dispose();
             }
-            
+            Render(currentScene);
             // Finally, display the rendered frame on screen
             window.Display();
         }
@@ -252,13 +254,13 @@ public class Window
 
     private void Render(Scene currentScene)
     {
-        var renderableEntities = currentScene.EntitiesAndMaster
+        var renderableEntities = currentScene.EntitiesAndUIEntities
                 .Where(e => 
                     e.HasComponent<ECS.Components.Sprite>() ||
                     e.HasComponent<RenderRect>() ||
                     e.HasComponent<RenderCircle>()
                 ).OrderBy(entity => entity.Transform.Position.Z);
-        var textEntities = currentScene.EntitiesAndMaster
+        var textEntities = currentScene.EntitiesAndUIEntities
             .Where(e => e.HasComponent<ECS.Components.TextComponent>());
         
             foreach (var entity in renderableEntities)
@@ -368,7 +370,7 @@ public class Window
                 }
             }
             
-            var circleColliderEntities = currentScene.EntitiesAndMaster
+            var circleColliderEntities = currentScene.EntitiesAndUIEntities
                 .Where(e => e.HasComponent<ECS.Components.CircleCollider>());
 
             foreach (var entity in circleColliderEntities)

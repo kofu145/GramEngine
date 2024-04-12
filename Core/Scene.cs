@@ -128,7 +128,7 @@ public class Scene
         foreach(var entity in entitiesToAdd)
         {
             entity.ParentScene = this;
-            if (entity.isUIEntity)
+            if (entity.IsUIEntity)
                 UIEntities.Add(entity);
             else
                 entities.Add(entity);
@@ -137,7 +137,7 @@ public class Scene
 
         foreach(var entity in entitiesToDestroy)
         {
-            if (entity.isUIEntity)
+            if (entity.IsUIEntity)
                 UIEntities.Remove(entity);
             else
                 entities.Remove(entity);

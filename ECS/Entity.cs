@@ -36,19 +36,31 @@ namespace GramEngine.ECS;
         public Scene ParentScene { get; internal set; }
         
         /// <summary>
+        /// The parent entity of this entity, if any.
+        /// </summary>
+        public Entity? ParentEntity { get; private set; } = null;
+
+        private readonly List<Entity> childEntities;
+        
+        /// <summary>
         /// A string attributed to entities for ease of identification. 
         /// </summary>
         public string Tag { get; set; }
         
-        internal bool isUIEntity { get; set; } = false;
+        /// <summary>
+        /// Designates whether or not this is a UI entity.
+        /// </summary>
+        public bool IsUIEntity { get; set; } = false;
 
         /// <summary>
         /// Initializes a new entity.
         /// </summary>
-        public Entity()
+        public Entity(bool isUiEntity = false)
         {
             this.id = Guid.NewGuid();
+            IsUIEntity = isUiEntity;
             this.components = new ConcurrentDictionary<Type, IComponent>();
+            childEntities = new List<Entity>();
             this.Transform = new Transform();
         }
 
@@ -56,19 +68,22 @@ namespace GramEngine.ECS;
         /// Initializes a new entity.
         /// </summary>
         /// <param name="id">The GUID identifier for this entity.</param>
-        public Entity(Guid id)
+        public Entity(Guid id, bool isUiEntity = false)
         {
             this.id = id;
+            this.IsUIEntity = isUiEntity;
+            childEntities = new List<Entity>();
             this.components = new ConcurrentDictionary<Type, IComponent>();
         }
 
-        /// Initializes a new entity.
+        /// Initializes a new entity with a component.
         /// </summary>
         /// <param name="component">The component for this entity.</param>
         public Entity(IComponent component)
         {
             this.id = Guid.NewGuid();
             this.components = new ConcurrentDictionary<Type, IComponent>();
+            childEntities = new List<Entity>();
             this.components.TryAdd(component.GetType(), component);
 
         }
@@ -77,6 +92,7 @@ namespace GramEngine.ECS;
         {
             this.id = Guid.NewGuid();
             components = copyComponents;
+            childEntities = new List<Entity>();
         }
 
         internal void Initialize()
@@ -168,6 +184,33 @@ namespace GramEngine.ECS;
             IComponent value;
             components.TryRemove(typeof(T), out value);
             return value;
+        }
+
+        /// <summary>
+        /// Sets the parent of the current entity.
+        /// </summary>
+        /// <param name="entity">The entity to designate as this entity's parent</param>
+        public void SetParent(Entity? entity)
+        {
+            if (entity != null)
+            {
+                if (ParentEntity != null)
+                    ParentEntity.childEntities.Remove(this);
+                
+                ParentEntity = entity;
+                ParentEntity.childEntities.Add(this);
+                
+            }
+        }
+
+        /// <summary>
+        /// Get a list of all the child entities of this entity.
+        /// Note that this is a copy of the actual list to keep track of children.
+        /// </summary>
+        /// <returns>A copy of the child entities list.</returns>
+        public List<Entity> GetChildren()
+        {
+            return new List<Entity>(childEntities);
         }
 
         internal List<IComponent> GetRenderable()

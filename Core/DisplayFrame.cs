@@ -1,5 +1,6 @@
 using System.Numerics;
 using GramEngine.ECS;
+using GramEngine.ECS.Components;
 using SFML.Graphics;
 using SFML.System;
 using Sprite = GramEngine.ECS.Components.Sprite;
@@ -23,6 +24,20 @@ public class DisplayFrame
         var sprite = entity.GetComponent<Sprite>();
         sprite.GetTransformTarget();
         frame.Draw(sprite.sfmlSprite);
+    }
+
+    public void RenderSprite(Sprite sprite, int x, int y, int rotation)
+    {
+        sprite.sfmlSprite.Position = new Vector2f(x, y);
+        sprite.sfmlSprite.Rotation = rotation;
+        frame.Draw(sprite.sfmlSprite);
+    }
+
+    public void RenderText(TextComponent text, int x, int y, int rotation)
+    {
+        text.text.Position = new Vector2f(x, y);
+        text.text.Rotation = rotation;
+        frame.Draw(text.text);
     }
 
     /// <summary>

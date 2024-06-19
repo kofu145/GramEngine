@@ -36,7 +36,10 @@ public class TextComponent : Component
 
     internal Text text;
     internal string fontPath;
+
+    public bool UseLocalScale = false;
     public Vector2 TextOffset;
+    public Vector2 LocalScale;
 
     public string Text
     {
@@ -68,11 +71,13 @@ public class TextComponent : Component
         set => text.Style = (SFML.Graphics.Text.Styles)value;
     }
     
-    public TextComponent(string text, string fontPath, int size)
+    public TextComponent(string text, string fontPath, int size, bool useLocalScale = false)
     {
         this.fontPath = fontPath;
         this.text = new Text(text, new Font(fontPath), (uint)size);
         TextOffset = new Vector2();
+        LocalScale = new Vector2();
+        UseLocalScale = useLocalScale;
     }
     
     public override void Initialize()

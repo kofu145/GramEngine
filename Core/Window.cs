@@ -362,7 +362,10 @@ public class Window
                 var sfmlVectorPos = (entity.Transform.Position + textComponent.TextOffset.ToVec3()).ToSFMLVector();
                 textComponent.text.Position = new Vector2f(sfmlVectorPos.X, sfmlVectorPos.Y);
                 textComponent.text.Rotation = entity.Transform.Rotation.Z;
-                textComponent.text.Scale = entity.Transform.Scale.ToSFMLVector();
+                if (!textComponent.UseLocalScale)
+                    textComponent.text.Scale = entity.Transform.Scale.ToSFMLVector();
+                else
+                    textComponent.text.Scale = textComponent.LocalScale.ToSFMLVector();
 
                 if (textComponent.Enabled)
                 {
@@ -510,9 +513,7 @@ public class Window
         float posX = 0;
         float posY = 0;
 
-        bool horizontalSpacing = true;
-        if (windowRatio < viewRatio)
-            horizontalSpacing = false;
+        bool horizontalSpacing = !(windowRatio < viewRatio);
 
         // If horizontalSpacing is true, the black bars will appear on the left and right side.
         // Otherwise, the black bars will appear on the top and bottom.

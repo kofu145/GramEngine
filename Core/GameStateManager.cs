@@ -122,7 +122,8 @@ public static class GameStateManager
             {
                 try
                 {
-                    // var screen = screens.Peek();
+                    var screen = screens.Peek();
+                    screen.Dispose();
                     screens.Pop();
                 }
                 catch (Exception e)

@@ -362,10 +362,14 @@ public class Window
                     // shorthand for easy writing
                     var sfmlVectorPos = entity.Transform.Position.ToSFMLVector();
                     //rect.rectangleShape.Scale = entity.Transform.Scale.ToSFMLVector();
-                
+                    
                     if (tilemap.Enabled)
-                        // for z ordering, sort along 
-                        window.Draw(tilemap.mVertices);
+                    {
+                        tilemap.Render();
+                        var renderState = new RenderStates(tilemap.tileset);
+                        renderState.Transform.TransformPoint(tilemap.Transform.Position.ToVec2().ToSFMLVector());
+                        window.Draw(tilemap.mVertices, renderState);
+                    }
                 }
             }
                 

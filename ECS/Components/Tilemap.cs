@@ -1,4 +1,5 @@
 using System.Numerics;
+using System.Runtime.InteropServices.ComTypes;
 using GramEngine.ECS;
 using SFML.Graphics;
 using SFML.System;
@@ -6,7 +7,7 @@ using SkiaSharp;
 
 namespace GramEngine.Core;
 
-public class Tilemap : Component
+public class Tilemap : Component, Drawable
 {
     private Vector2 tileSize;
     public Vector2 TileSize { 
@@ -26,11 +27,11 @@ public class Tilemap : Component
     // height of the entire tilemap
     public uint Height => (uint)size.Y;
 
-    private Texture tileset;
+    internal Texture tileset;
     private Dictionary<Vector2, Tile> map;
     internal VertexArray mVertices;
 
-    public Tilemap(Vector2 tileSize, Vector2 size, Image tileAtlas)
+    public Tilemap(Vector2 tileSize, Vector2 size, string tileAtlas)
     {
         this.tileSize = tileSize;
         this.size = size;
@@ -42,11 +43,12 @@ public class Tilemap : Component
     public override void Initialize()
     {
         base.Initialize();
+        Render();
     }
 
+    
     internal void Render()
     {
-        mVertices.Clear();
         mVertices.PrimitiveType = PrimitiveType.Triangles;
         mVertices.Resize((uint)(Width * Height * 6));
 
@@ -65,31 +67,23 @@ public class Tilemap : Component
                 var triangles = mVertices[pos];
                 
                 // define the 6 corners of the two triangles
-                triangles.Position = new Vector2f(i * tileSize.X, j * tileSize.Y);
-                triangles = mVertices[pos + 1];
-                triangles.Position = new Vector2f((i + 1) * tileSize.X, j * tileSize.Y);
-                triangles = mVertices[pos + 2];
-                triangles.Position = new Vector2f(i * tileSize.X, (j + 1) * tileSize.Y);
-                triangles = mVertices[pos + 3];
-                triangles.Position = new Vector2f(i * tileSize.X, (j + 1) * tileSize.Y);
-                triangles = mVertices[pos + 4];
-                triangles.Position = new Vector2f((i + 1) * tileSize.X, j * tileSize.Y);
-                triangles = mVertices[pos + 5];
-                triangles.Position = new Vector2f((i + 1) * tileSize.X, (j + 1) * tileSize.Y);
-
-                // define the 6 matching texture coordinates
-                triangles = mVertices[pos];
-                triangles.TexCoords = new Vector2f(tu * tileSize.X, tv * tileSize.Y);
-                triangles = mVertices[pos + 1];
-                triangles.TexCoords =  new Vector2f((tu + 1) * tileSize.X, tv * tileSize.Y);
-                triangles = mVertices[pos + 2];
-                triangles.TexCoords =  new Vector2f(tu * tileSize.X, (tv + 1) * tileSize.Y);
-                triangles = mVertices[pos + 3];
-                triangles.TexCoords =  new Vector2f(tu * tileSize.X, (tv + 1) * tileSize.Y);
-                triangles = mVertices[pos + 4];
-                triangles.TexCoords =  new Vector2f((tu + 1) * tileSize.X, tv * tileSize.Y);
-                triangles = mVertices[pos + 5];
-                triangles.TexCoords =  new Vector2f((tu + 1) * tileSize.X, (tv + 1) * tileSize.Y);
+                mVertices[pos] = new Vertex(new Vector2f(i * tileSize.X, j * tileSize.Y), 
+                    new Vector2f(tu * tileSize.X, tv * tileSize.Y));
+                
+                mVertices[pos + 1] = new Vertex(new Vector2f((i + 1) * tileSize.X, j * tileSize.Y),
+                    new Vector2f((tu + 1) * tileSize.X, tv * tileSize.Y));
+                
+                mVertices[pos + 2] = new Vertex(new Vector2f(i * tileSize.X, (j + 1) * tileSize.Y),
+                        new Vector2f(tu * tileSize.X, (tv + 1) * tileSize.Y));
+                
+                mVertices[pos + 3] = new Vertex(new Vector2f(i * tileSize.X, (j + 1) * tileSize.Y),
+                        new Vector2f(tu * tileSize.X, (tv + 1) * tileSize.Y));
+                
+                mVertices[pos + 4] = new Vertex(new Vector2f((i + 1) * tileSize.X, j * tileSize.Y),
+                    new Vector2f((tu + 1) * tileSize.X, tv * tileSize.Y));
+                
+                mVertices[pos + 5] = new Vertex(new Vector2f((i + 1) * tileSize.X, (j + 1) * tileSize.Y),
+                    new Vector2f((tu + 1) * tileSize.X, (tv + 1) * tileSize.Y));
 
             }
         }
@@ -100,5 +94,9 @@ public class Tilemap : Component
     {
         base.Update(gameTime);
     }
-    
+
+    public void Draw(RenderTarget target, RenderStates states)
+    {
+        
+    }
 }

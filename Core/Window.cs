@@ -258,7 +258,8 @@ public class Window
                 .Where(e => 
                     e.HasComponent<ECS.Components.Sprite>() ||
                     e.HasComponent<RenderRect>() ||
-                    e.HasComponent<RenderCircle>()
+                    e.HasComponent<RenderCircle>() ||
+                    e.HasComponent<Tilemap>()
                 ).OrderBy(entity => entity.Transform.Position.Z);
         var textEntities = currentScene.EntitiesAndUIEntities
             .Where(e => e.HasComponent<ECS.Components.TextComponent>());
@@ -351,6 +352,20 @@ public class Window
                     if (circle.Enabled)
                         // for z ordering, sort along 
                         window.Draw(circle.circleShape);
+                }
+
+                if (entity.HasComponent<Tilemap>())
+                {
+                    var tilemap = entity.GetComponent<Tilemap>();
+
+                    // We set the sprite render transform to be the same as the entity's
+                    // shorthand for easy writing
+                    var sfmlVectorPos = entity.Transform.Position.ToSFMLVector();
+                    //rect.rectangleShape.Scale = entity.Transform.Scale.ToSFMLVector();
+                
+                    if (tilemap.Enabled)
+                        // for z ordering, sort along 
+                        window.Draw(tilemap.mVertices);
                 }
             }
                 

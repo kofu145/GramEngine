@@ -7,7 +7,10 @@ public static class GameStateManager
         private static Stack<IGameState> screens = new Stack<IGameState>();
 
         public static Window Window { get; internal set; }
-        
+
+        public static uint BaseWindowWidth => Window.settings.BaseWindowWidth;
+        public static uint BaseWindowHeight => Window.settings.BaseWindowHeight;
+
         public static GameTime GameTime { get; internal set; }
         public static SceneTransition TransitionEffect { get; internal set; }
         

@@ -366,8 +366,11 @@ public class Window
                     if (tilemap.Enabled)
                     {
                         tilemap.Render();
+                        
                         var renderState = new RenderStates(tilemap.tileset);
-                        renderState.Transform.TransformPoint(tilemap.Transform.Position.ToVec2().ToSFMLVector());
+                        renderState.Transform.Translate(tilemap.Transform.Position.ToVec2().ToSFMLVector());
+                        renderState.Transform.Scale(tilemap.Transform.Scale.ToSFMLVector());
+                        
                         window.Draw(tilemap.mVertices, renderState);
                     }
                 }

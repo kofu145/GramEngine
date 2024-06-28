@@ -23,7 +23,6 @@ public class FollowParent : Component
     {
         base.Update(gameTime);
         if (ParentEntity.ParentEntity != null)
-            ParentEntity.Transform.Position = ParentEntity.ParentEntity.Transform.Position + offset;
-        
+            Transform.Position = ParentEntity.ParentEntity.Transform.Position + offset;
     }
 }

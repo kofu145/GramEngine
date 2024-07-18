@@ -71,6 +71,12 @@ public class TextComponent : Component
         set => text.Style = (SFML.Graphics.Text.Styles)value;
     }
     
+    public Vector2 Origin
+    {
+        get { return text.Origin.ToSysNumVector(); }
+        set { text.Origin = value.ToSFMLVector(); }
+    }
+    
     public TextComponent(string text, string fontPath, int size, bool useLocalScale = false)
     {
         this.fontPath = fontPath;

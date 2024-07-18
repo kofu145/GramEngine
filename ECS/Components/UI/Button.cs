@@ -21,13 +21,15 @@ public class Button : Component
     public bool isPressed = false;
     public int Width;
     public int Height;
+    public bool CenterOrigin;
     
     private Sprite parentSprite;
     
-    public Button(int width, int height)
+    public Button(int width, int height, bool centerOrigin = true)
     {
         Width = width;
         Height = height;
+        CenterOrigin = centerOrigin;
     }
     public override void Initialize()
     {
@@ -38,8 +40,11 @@ public class Button : Component
         var pos = ParentEntity.Transform.Position;
         Vector2 mousePos = InputManager.MouseWorldPos;
         // check if mouse in bounds
-        if (mousePos.X > pos.X && mousePos.X < pos.X + Width &&
-            mousePos.Y > pos.Y && mousePos.Y < pos.Y + Height)
+        if ((mousePos.X > pos.X && mousePos.X < pos.X + Width &&
+            mousePos.Y > pos.Y && mousePos.Y < pos.Y + Height && !CenterOrigin) ||
+            (mousePos.X > pos.X - Width / 2 && mousePos.X < pos.X + Width / 2 &&
+             mousePos.Y > pos.Y - Height / 2 && mousePos.Y < pos.Y + Height / 2 && CenterOrigin)
+            )
         {
             // set to hovered if in bounds and not already hovered
             if (!isHovered)

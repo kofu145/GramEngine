@@ -11,6 +11,11 @@ public class RenderRect : Component, IRenderable
     internal RectangleShape rectangleShape;
     Drawable IRenderable.GetRenderTarget() => GetRenderTarget();
 
+    public Vector2 Origin
+    {
+        get { return rectangleShape.Origin.ToSysNumVector(); }
+        set { rectangleShape.Origin = value.ToSFMLVector(); }
+    }
 
     public System.Drawing.Color FillColor
     {
@@ -36,9 +41,13 @@ public class RenderRect : Component, IRenderable
         set => rectangleShape.Size = value.ToSFMLVector();
     }
 
-    public RenderRect(Vector2 size)
+    public RenderRect(Vector2 size, bool centerOrigin = true)
     {
         this.rectangleShape = new RectangleShape(size.ToSFMLVector());
+        if (centerOrigin)
+        {
+            Origin = new Vector2(size.X / 2, size.Y / 2);
+        }
     }
     
     public SFML.Graphics.RectangleShape GetRenderTarget()

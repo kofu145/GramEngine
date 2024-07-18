@@ -21,6 +21,9 @@ public static class InputManager
         internal static Dictionary<Keys, bool> keyStateWasPressed = new Dictionary<Keys, bool>();
         internal static Dictionary<Keys, bool> keyStateWasReleased = new Dictionary<Keys, bool>();
         
+        internal static Dictionary<MouseButton, bool> mouseButtonStateWasPressed = new Dictionary<MouseButton, bool>();
+        internal static Dictionary<MouseButton, bool> mouseButtonStateWasReleased = new Dictionary<MouseButton, bool>();
+        
         public static Vector2 MouseWorldPos => 
             GameStateManager.Window.window.MapPixelToCoords(Mouse.GetPosition(GameStateManager.Window.window)).ToSysNumVector();
         /// <summary>
@@ -43,6 +46,12 @@ public static class InputManager
             {
                 keyStateWasReleased[key] = false;
                 keyStateWasPressed[key] = false;
+            }
+            
+            foreach (MouseButton key in Enum.GetValues(typeof(MouseButton)))
+            {
+                mouseButtonStateWasPressed[key] = false;
+                mouseButtonStateWasReleased[key] = false;
             }
         }
         
@@ -86,6 +95,32 @@ public static class InputManager
         public static bool GetMousePress(MouseButton mouseButton)
         {
             return Mouse.IsButtonPressed((Mouse.Button)mouseButton);
+        }
+        
+        public static bool GetMouseButtonDown(MouseButton mouseButton)
+        {
+            bool mouseButtonPressed = Mouse.IsButtonPressed((Mouse.Button)mouseButton);
+            if (mouseButtonPressed && !mouseButtonStateWasPressed[mouseButton])
+            {
+                mouseButtonStateWasPressed[mouseButton] = true;
+                return true;
+            }
+            mouseButtonStateWasPressed[mouseButton] = mouseButtonPressed;
+            return false;
+        }
+
+        public static bool GetMouseButtonUp(MouseButton mouseButton)
+        {
+            bool mouseButtonPressed = Keyboard.IsKeyPressed((Keyboard.Key)mouseButton);
+            if (!mouseButtonPressed && mouseButtonStateWasReleased[mouseButton])
+            {
+                mouseButtonStateWasReleased[mouseButton] = false;
+                return true;
+            }
+            
+            mouseButtonStateWasReleased[mouseButton] = mouseButtonPressed;
+            
+            return false;
         }
         /*
         public bool GetKeyPressed(Keys key)

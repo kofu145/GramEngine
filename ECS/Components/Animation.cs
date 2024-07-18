@@ -17,6 +17,7 @@ public class Animation : Component
     public bool Complete{
         get => currFrame >= Animations[state].Frames.Count-1 && !loop; 
     }
+    public string State => state;  
 
     public bool ResetOnFinish = false;
     

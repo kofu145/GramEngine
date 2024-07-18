@@ -163,12 +163,12 @@ namespace GramEngine.ECS;
             return components.ContainsKey(typeof(T));
         }
 
-        // Add a component. Returns the current entity for chain-adding.
-        public Entity AddComponent<T>(T component) where T : IComponent
+        // Add a component. Returns the component added, if needed for manipulation right afterward.
+        public T AddComponent<T>(T component) where T : IComponent
         {
             components[typeof(T)] = component;
             component.SetParent(this);
-            return this;
+            return component;
         }
 
         public IComponent RemoveComponent<T>() where T: IComponent

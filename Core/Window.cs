@@ -110,14 +110,16 @@ public class Window
         
         // TODO: this data needs to be recycled on a per scene basis
         float framesRendered = 0;
-        var fpsEntity = new Entity().AddComponent(new TextComponent("", "./SourceFiles/square.ttf", 24));
+        var fpsEntity = new Entity();
+        fpsEntity.AddComponent(new TextComponent("", "./SourceFiles/square.ttf", 24));
         fpsEntity.IsUIEntity = true;
         fpsEntity.Tag = "FPS";
         if (settings.ShowFPS)
             GameStateManager.GetScreen().GameScene.AddEntity(fpsEntity);
         
         float lowestFPS = int.MaxValue;
-        var lowFPSEntity = new Entity().AddComponent(new TextComponent("", "./SourceFiles/square.ttf", 24));
+        var lowFPSEntity = new Entity();
+            lowFPSEntity.AddComponent(new TextComponent("", "./SourceFiles/square.ttf", 24));
         lowFPSEntity.Transform.Position.Y += 40;
         lowFPSEntity.IsUIEntity = true;
         lowFPSEntity.Tag = "lowFPS";
@@ -126,7 +128,8 @@ public class Window
 
         if (!settings.NaiveCollision)
         {
-            var circleCollisionManager = new Entity().AddComponent(new CircleColliderSystem(100));
+            var circleCollisionManager = new Entity();
+            circleCollisionManager.AddComponent(new CircleColliderSystem(100));
             GameStateManager.GetScreen().GameScene.AddEntity(circleCollisionManager);
         }
 

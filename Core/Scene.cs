@@ -13,7 +13,7 @@ public class Scene
     /// The list of all entities in the scene.
     /// </summary>
     private List<Entity> entities;
-    private List<Entity> UIEntities;
+    private List<Entity> uiEntities;
     
     private List<Entity> entitiesToAdd;
     private List<Entity> entitiesToDestroy;
@@ -22,8 +22,9 @@ public class Scene
 
     public Vector2 backgroundOffset;
     public IReadOnlyList<Entity> Entities { get { return entities; } }
+    public IReadOnlyList<Entity> UIEntities => uiEntities;
     
-    internal IReadOnlyList<Entity> EntitiesAndUIEntities => entities.Concat(UIEntities).ToList();
+    internal IReadOnlyList<Entity> EntitiesAndUIEntities => entities.Concat(uiEntities).ToList();
 
     public Scene()
     {
@@ -31,7 +32,7 @@ public class Scene
         entitiesToAdd = new List<Entity>();
         entitiesToDestroy = new List<Entity>();
         uninitializedEntities = new List<Entity>();
-        UIEntities = new List<Entity>();
+        uiEntities = new List<Entity>();
         backgroundOffset = new Vector2(0, 0);
     }
 
@@ -70,7 +71,7 @@ public class Scene
     /// <param name="tag">The entity tag to be searched for.</param>
     internal Entity FindUIEntityWithTag(string tag)
     {
-        foreach (var entity in UIEntities)
+        foreach (var entity in uiEntities)
         {
             if (entity.Tag == tag)
             {
@@ -117,7 +118,7 @@ public class Scene
             entity.Update(gameTime);
         }
 
-        foreach (var entity in UIEntities)
+        foreach (var entity in uiEntities)
         {
             entity.Update(gameTime);
         }
@@ -129,7 +130,7 @@ public class Scene
         {
             entity.ParentScene = this;
             if (entity.IsUIEntity)
-                UIEntities.Add(entity);
+                uiEntities.Add(entity);
             else
                 entities.Add(entity);
             uninitializedEntities.Add(entity);
@@ -138,7 +139,7 @@ public class Scene
         foreach(var entity in entitiesToDestroy)
         {
             if (entity.IsUIEntity)
-                UIEntities.Remove(entity);
+                uiEntities.Remove(entity);
             else
                 entities.Remove(entity);
             entity.Dispose();

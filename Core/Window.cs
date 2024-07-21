@@ -25,6 +25,7 @@ public class Window
     public uint Width { get => window.Size.X; }
     public uint Height { get => window.Size.Y; }
     public float Zoom;
+    public bool WindowFocused => windowFocused;
 
     public event MidTransition OnMidTransition;
     public delegate void MidTransition();
@@ -35,6 +36,7 @@ public class Window
     private VideoMode mode;
     private View mainView;
     private SceneTransition transition;
+    private bool windowFocused;
     internal List<DisplayFrame> displayFrames;
 
 
@@ -72,7 +74,7 @@ public class Window
         window.SetView(getLetterboxView(mainView, window.Size.X, window.Size.Y));
         BackgroundColor = System.Drawing.Color.Black;
         displayFrames = new List<DisplayFrame>();
-
+        windowFocused = true;
         transition = SceneTransition.None;
         transitionTimer = 0;
         GameStateManager.AddScreen(initialGameState);
@@ -93,6 +95,8 @@ public class Window
         window.KeyReleased += Window_KeyReleased;
         window.Resized += Window_Resized;
         window.Closed += Window_Closed;
+        window.LostFocus += Window_LostFocus;
+        window.GainedFocus += Window_GainedFocus;
         
         //window.SetFramerateLimit(60);
         //window.SetVerticalSyncEnabled(true);
@@ -110,7 +114,7 @@ public class Window
         
         // TODO: this data needs to be recycled on a per scene basis
         float framesRendered = 0;
-        var fpsEntity = new Entity();
+        var fpsEntity = new Entity(true);
         fpsEntity.AddComponent(new TextComponent("", "./SourceFiles/square.ttf", 24));
         fpsEntity.IsUIEntity = true;
         fpsEntity.Tag = "FPS";
@@ -118,7 +122,7 @@ public class Window
             GameStateManager.GetScreen().GameScene.AddEntity(fpsEntity);
         
         float lowestFPS = int.MaxValue;
-        var lowFPSEntity = new Entity();
+        var lowFPSEntity = new Entity(true);
             lowFPSEntity.AddComponent(new TextComponent("", "./SourceFiles/square.ttf", 24));
         lowFPSEntity.Transform.Position.Y += 40;
         lowFPSEntity.IsUIEntity = true;
@@ -254,17 +258,17 @@ public class Window
             window.Display();
         }
     }
-
+    
     private void Render(Scene currentScene)
     {
-        var renderableEntities = currentScene.EntitiesAndUIEntities
+        var renderableEntities = currentScene.Entities
                 .Where(e => 
                     e.HasComponent<ECS.Components.Sprite>() ||
                     e.HasComponent<RenderRect>() ||
                     e.HasComponent<RenderCircle>() ||
                     e.HasComponent<Tilemap>()
                 ).OrderBy(entity => entity.Transform.Position.Z);
-        var textEntities = currentScene.EntitiesAndUIEntities
+        var textEntities = currentScene.Entities
             .Where(e => e.HasComponent<ECS.Components.TextComponent>());
         
             foreach (var entity in renderableEntities)
@@ -291,92 +295,7 @@ public class Window
                             }
                         }
                     } */
-                if (entity.HasComponent<ECS.Components.Sprite>())
-                {
-                    var sprite = entity.GetComponent<ECS.Components.Sprite>();
-
-                    // We set the sprite render transform to be the same as the entity's
-                    // shorthand for easy writing
-                    var sfmlVectorPos = entity.Transform.Position.ToSFMLVector();
-                    sprite.sfmlSprite.Position = new Vector2f(
-                        sfmlVectorPos.X + settings.GlobalXOffset, 
-                        sfmlVectorPos.Y + settings.GlobalYOffset
-                        );
-                    sprite.sfmlSprite.Rotation = entity.Transform.Rotation.Z;
-                    sprite.sfmlSprite.Scale = entity.Transform.Scale.ToSFMLVector();
-
-                    if (sprite.Enabled)
-                    {
-                        if (settings.SpriteCulling && 
-                            entity.Transform.Position.X > -10 && entity.Transform.Position.X < window.Size.X + 10 &&
-                            entity.Transform.Position.Y > -10 && entity.Transform.Position.Y < window.Size.Y + 10) 
-                            window.Draw(sprite.sfmlSprite);
-                        else
-                        {
-                            window.Draw(sprite.sfmlSprite);
-
-                        }
-                    }
-                }
-                
-                if (entity.HasComponent<RenderRect>())
-                {
-                    var rect = entity.GetComponent<RenderRect>();
-
-                    // We set the sprite render transform to be the same as the entity's
-                    // shorthand for easy writing
-                    var sfmlVectorPos = entity.Transform.Position.ToSFMLVector();
-                    rect.rectangleShape.Position = new Vector2f(
-                        sfmlVectorPos.X + settings.GlobalXOffset, 
-                        sfmlVectorPos.Y + settings.GlobalYOffset
-                    );
-                    rect.rectangleShape.Rotation = entity.Transform.Rotation.Z;
-                    //rect.rectangleShape.Scale = entity.Transform.Scale.ToSFMLVector();
-                
-                    if (rect.Enabled)
-                        // for z ordering, sort along 
-                        window.Draw(rect.rectangleShape);
-                }
-
-                if (entity.HasComponent<RenderCircle>())
-                {
-                    var circle = entity.GetComponent<RenderCircle>();
-
-                    // We set the sprite render transform to be the same as the entity's
-                    // shorthand for easy writing
-                    var sfmlVectorPos = entity.Transform.Position.ToSFMLVector();
-                    circle.circleShape.Position = new Vector2f(
-                        sfmlVectorPos.X + settings.GlobalXOffset, 
-                        sfmlVectorPos.Y + settings.GlobalYOffset
-                    );
-                    circle.circleShape.Rotation = entity.Transform.Rotation.Z;
-                    //circle.circleShape.Scale = entity.Transform.Scale.ToSFMLVector();
-                
-                    if (circle.Enabled)
-                        // for z ordering, sort along 
-                        window.Draw(circle.circleShape);
-                }
-
-                if (entity.HasComponent<Tilemap>())
-                {
-                    var tilemap = entity.GetComponent<Tilemap>();
-
-                    // We set the sprite render transform to be the same as the entity's
-                    // shorthand for easy writing
-                    var sfmlVectorPos = entity.Transform.Position.ToSFMLVector();
-                    //rect.rectangleShape.Scale = entity.Transform.Scale.ToSFMLVector();
-                    
-                    if (tilemap.Enabled)
-                    {
-                        tilemap.Render();
-                        
-                        var renderState = new RenderStates(tilemap.tileset);
-                        renderState.Transform.Translate(tilemap.Transform.Position.ToVec2().ToSFMLVector());
-                        renderState.Transform.Scale(tilemap.Transform.Scale.ToSFMLVector());
-                        
-                        window.Draw(tilemap.mVertices, renderState);
-                    }
-                }
+                Draw(entity);
             }
                 
             // debug rendering
@@ -415,6 +334,42 @@ public class Window
                     window.Draw(circleCollider.circleShape);                  
                 }
             }
+            
+            // separate render pass for UI entities, always on top
+            
+            var renderableUIEntities = currentScene.UIEntities
+                .Where(e => 
+                    e.HasComponent<ECS.Components.Sprite>() ||
+                    e.HasComponent<RenderRect>() ||
+                    e.HasComponent<RenderCircle>() ||
+                    e.HasComponent<Tilemap>()
+                ).OrderBy(entity => entity.Transform.Position.Z);
+            var renderableTextUIEntities = currentScene.UIEntities
+                .Where(e => e.HasComponent<ECS.Components.TextComponent>());
+            
+            foreach (var entity in renderableUIEntities)
+            {
+                Draw(entity);
+            }
+                
+            // debug rendering
+            foreach (var entity in renderableTextUIEntities)
+            {
+                var textComponent = entity.GetComponent<TextComponent>();
+                // shorthand for easy writing
+                var sfmlVectorPos = (entity.Transform.Position + textComponent.TextOffset.ToVec3()).ToSFMLVector();
+                textComponent.text.Position = new Vector2f(sfmlVectorPos.X, sfmlVectorPos.Y);
+                textComponent.text.Rotation = entity.Transform.Rotation.Z;
+                if (!textComponent.UseLocalScale)
+                    textComponent.text.Scale = entity.Transform.Scale.ToSFMLVector();
+                else
+                    textComponent.text.Scale = textComponent.LocalScale.ToSFMLVector();
+
+                if (textComponent.Enabled)
+                {
+                    window.Draw(textComponent.text);
+                }
+            }
     }
 
     /// <summary>
@@ -444,6 +399,31 @@ public class Window
         }*/
 
         
+    }
+    
+    /// <summary>
+    /// Function called when window gains focus
+    /// </summary>
+    private void Window_GainedFocus(object? sender, EventArgs e)
+    {
+        var window = (SFML.Window.Window)sender;
+        /*if (e.Code == Keyboard.Key.Escape)
+        {
+            window.Close();
+        }*/
+        windowFocused = true;
+
+    }
+    
+    private void Window_LostFocus(object? sender, EventArgs e)
+    {
+        var window = (SFML.Window.Window)sender;
+        /*if (e.Code == Keyboard.Key.Escape)
+        {
+            window.Close();
+        }*/
+        windowFocused = false;
+
     }
 
     private void Window_Resized(object sender, SFML.Window.SizeEventArgs e)
@@ -478,9 +458,15 @@ public class Window
 
             if (sprite.Enabled)
             {
-                
-                // for z ordering, sort along 
-                window.Draw(sprite.sfmlSprite);
+                if (settings.SpriteCulling && 
+                    entity.Transform.Position.X > -10 && entity.Transform.Position.X < window.Size.X + 10 &&
+                    entity.Transform.Position.Y > -10 && entity.Transform.Position.Y < window.Size.Y + 10) 
+                    window.Draw(sprite.sfmlSprite);
+                else
+                {
+                    window.Draw(sprite.sfmlSprite);
+
+                }
             }
         }
         
@@ -496,7 +482,7 @@ public class Window
                 sfmlVectorPos.Y + settings.GlobalYOffset
             );
             rect.rectangleShape.Rotation = entity.Transform.Rotation.Z;
-            rect.rectangleShape.Scale = entity.Transform.Scale.ToSFMLVector();
+            //rect.rectangleShape.Scale = entity.Transform.Scale.ToSFMLVector();
         
             if (rect.Enabled)
                 // for z ordering, sort along 
@@ -520,6 +506,27 @@ public class Window
             if (circle.Enabled)
                 // for z ordering, sort along 
                 window.Draw(circle.circleShape);
+        }
+
+        if (entity.HasComponent<Tilemap>())
+        {
+            var tilemap = entity.GetComponent<Tilemap>();
+
+            // We set the sprite render transform to be the same as the entity's
+            // shorthand for easy writing
+            var sfmlVectorPos = entity.Transform.Position.ToSFMLVector();
+            //rect.rectangleShape.Scale = entity.Transform.Scale.ToSFMLVector();
+            
+            if (tilemap.Enabled)
+            {
+                tilemap.Render();
+                
+                var renderState = new RenderStates(tilemap.tileset);
+                renderState.Transform.Translate(tilemap.Transform.Position.ToVec2().ToSFMLVector());
+                renderState.Transform.Scale(tilemap.Transform.Scale.ToSFMLVector());
+                
+                window.Draw(tilemap.mVertices, renderState);
+            }
         }
     }
     

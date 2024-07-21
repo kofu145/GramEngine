@@ -104,7 +104,7 @@ public class CircleCollider : Component
 
                         var distToMove = Radius + otherCollider.Radius - distBetweenCircles;
 
-                        if (!otherCollider.Dynamic)
+                        if (otherCollider.Dynamic)
                         {
                             // move the collider to match bounds
                             Transform.Position.X -= (float)(Math.Cos(angle) * distToMove);

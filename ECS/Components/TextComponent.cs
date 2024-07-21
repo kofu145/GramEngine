@@ -76,6 +76,9 @@ public class TextComponent : Component
         get { return text.Origin.ToSysNumVector(); }
         set { text.Origin = value.ToSFMLVector(); }
     }
+
+    public float Width => text.GetLocalBounds().Width;
+    public float Height => text.GetLocalBounds().Height;
     
     public TextComponent(string text, string fontPath, int size, bool useLocalScale = false)
     {

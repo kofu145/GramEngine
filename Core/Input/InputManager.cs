@@ -18,11 +18,16 @@ public static class InputManager
         /// </summary>
         public static Vector2 MousePos => ((Vector2f)Mouse.GetPosition(GameStateManager.Window.window)).ToSysNumVector();
 
+        internal static Dictionary<Keys, bool> keyStateWasPressedToUpdate = new Dictionary<Keys, bool>();
+        internal static Dictionary<Keys, bool> keyStateWasReleasedToUpdate = new Dictionary<Keys, bool>();
+        internal static Dictionary<MouseButton, bool> mouseButtonStateWasPressedToUpdate = new Dictionary<MouseButton, bool>();
+        internal static Dictionary<MouseButton, bool> mouseButtonStateWasReleasedToUpdate = new Dictionary<MouseButton, bool>();
+        
         internal static Dictionary<Keys, bool> keyStateWasPressed = new Dictionary<Keys, bool>();
         internal static Dictionary<Keys, bool> keyStateWasReleased = new Dictionary<Keys, bool>();
-        
         internal static Dictionary<MouseButton, bool> mouseButtonStateWasPressed = new Dictionary<MouseButton, bool>();
         internal static Dictionary<MouseButton, bool> mouseButtonStateWasReleased = new Dictionary<MouseButton, bool>();
+
         
         public static Vector2 MouseWorldPos => 
             GameStateManager.Window.window.MapPixelToCoords(Mouse.GetPosition(GameStateManager.Window.window)).ToSysNumVector();
@@ -71,10 +76,10 @@ public static class InputManager
             bool keyPressed = Keyboard.IsKeyPressed((Keyboard.Key)key);
             if (keyPressed && !keyStateWasPressed[key])
             {
-                keyStateWasPressed[key] = true;
+                keyStateWasPressedToUpdate[key] = true;
                 return true;
             }
-            keyStateWasPressed[key] = keyPressed;
+            keyStateWasPressedToUpdate[key] = keyPressed;
             return false;
         }
 
@@ -83,11 +88,11 @@ public static class InputManager
             bool keyPressed = Keyboard.IsKeyPressed((Keyboard.Key)key);
             if (!keyPressed && keyStateWasReleased[key])
             {
-               keyStateWasReleased[key] = false;
+               keyStateWasReleasedToUpdate[key] = false;
                 return true;
             }
             
-            keyStateWasReleased[key] = keyPressed;
+            keyStateWasReleasedToUpdate[key] = keyPressed;
             
             return false;
         }
@@ -102,10 +107,10 @@ public static class InputManager
             bool mouseButtonPressed = Mouse.IsButtonPressed((Mouse.Button)mouseButton);
             if (mouseButtonPressed && !mouseButtonStateWasPressed[mouseButton])
             {
-                mouseButtonStateWasPressed[mouseButton] = true;
+                mouseButtonStateWasPressedToUpdate[mouseButton] = true;
                 return true;
             }
-            mouseButtonStateWasPressed[mouseButton] = mouseButtonPressed;
+            mouseButtonStateWasPressedToUpdate[mouseButton] = mouseButtonPressed;
             return false;
         }
 
@@ -114,14 +119,23 @@ public static class InputManager
             bool mouseButtonPressed = Keyboard.IsKeyPressed((Keyboard.Key)mouseButton);
             if (!mouseButtonPressed && mouseButtonStateWasReleased[mouseButton])
             {
-                mouseButtonStateWasReleased[mouseButton] = false;
+                mouseButtonStateWasReleasedToUpdate[mouseButton] = false;
                 return true;
             }
             
-            mouseButtonStateWasReleased[mouseButton] = mouseButtonPressed;
+            mouseButtonStateWasReleasedToUpdate[mouseButton] = mouseButtonPressed;
             
             return false;
         }
+
+        internal static void Update()
+        {
+            keyStateWasPressed = new Dictionary<Keys, bool>(keyStateWasPressedToUpdate);
+            keyStateWasReleased = new Dictionary<Keys, bool>(keyStateWasReleasedToUpdate);
+            mouseButtonStateWasPressed = new Dictionary<MouseButton, bool>(mouseButtonStateWasPressedToUpdate);
+            mouseButtonStateWasReleased = new Dictionary<MouseButton, bool>(mouseButtonStateWasReleasedToUpdate);
+        }
+        
         /*
         public bool GetKeyPressed(Keys key)
         {

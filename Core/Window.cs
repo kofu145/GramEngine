@@ -148,10 +148,12 @@ public class Window
             gameTime.UpdateTime();
             window.Clear(BackgroundColor.ToSFMLColor());
 
-            
-            currentScene.UpdateEntitiesList();
+            InputManager.Update();
 
+            currentScene.UpdateEntitiesList();
+            
             currentGameState.Update(gameTime);
+            
             // may be more delay from onload to now vs between frames?
             //Console.WriteLine(gameTime.DeltaTime);
             

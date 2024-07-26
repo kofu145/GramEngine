@@ -66,10 +66,10 @@ public class Scene
     
     /// <summary>
     /// <para>Returns the first entity found with a particular tag.</para>
-    /// Use <see cref="FindEntitiesWithTag"/> if you have multiple entities with the same tag.
+    /// Use <see cref="FindUIEntitiesWithTag"/> if you have multiple entities with the same tag.
     /// </summary>
     /// <param name="tag">The entity tag to be searched for.</param>
-    internal Entity FindUIEntityWithTag(string tag)
+    public Entity FindUIEntityWithTag(string tag)
     {
         foreach (var entity in uiEntities)
         {
@@ -92,6 +92,27 @@ public class Scene
         List<Entity> foundEntities = new List<Entity>();
 
         foreach (var entity in entities)
+        {
+            if (entity.Tag == tag)
+            {
+                foundEntities.Add(entity);
+            }
+        }
+
+        return foundEntities;
+    }
+    
+    /// <summary>
+    /// <para>Returns the first entity found with a particular tag.</para>
+    /// Use <see cref="FindUIEntitiesWithTag"/> if you have multiple entities with the same tag.
+    /// </summary>
+    /// <param name="tag">The entity tag to be searched for.</param>
+    public List<Entity> FindUIEntitiesWithTag(string tag)
+    {
+        // simple linear search, TODO: faster algorithm?
+        List<Entity> foundEntities = new List<Entity>();
+
+        foreach (var entity in uiEntities)
         {
             if (entity.Tag == tag)
             {

@@ -54,11 +54,13 @@ public class Button : Component
                 //StartHover();
             }
             // check if mouse button is down
-            if (InputManager.GetMousePress(MouseButton.Left))
+            if (InputManager.GetMouseButtonDown(MouseButton.Left))
             {
                 // if is down and not pressed = false then call mousepressed
                 if (!isPressed)
                 {
+                    // this call is just to invoke flags
+                    //InputManager.GetMouseButtonDown(MouseButton.Left);
                 isPressed = true;
                 OnButtonDown?.Invoke();
                 //StartPress();
@@ -78,11 +80,13 @@ public class Button : Component
             }
         }
         // check if mouse is not pressed 
-        if (!InputManager.GetMousePress(MouseButton.Left))
+        if (!InputManager.GetMouseButtonDown(MouseButton.Left))
         {
             // if not pressed and flag is currently set true then call not pressed function
             if (isPressed)
             {
+                // again, to set flags
+                //InputManager.GetMouseButtonUp(MouseButton.Left);
                 isPressed = false;
                 OnButtonUp?.Invoke();
                 //StopPress();

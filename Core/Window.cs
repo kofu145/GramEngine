@@ -124,11 +124,15 @@ public class Window
         float lowestFPS = int.MaxValue;
         var lowFPSEntity = new Entity(true);
             lowFPSEntity.AddComponent(new TextComponent("", "./SourceFiles/square.ttf", 24));
-        lowFPSEntity.Transform.Position.Y += 40;
+        lowFPSEntity.Transform.Position.Y += 30;
         lowFPSEntity.IsUIEntity = true;
         lowFPSEntity.Tag = "lowFPS";
         if (settings.ShowFPS)
             GameStateManager.GetScreen().GameScene.AddEntity(lowFPSEntity);
+        
+
+        fpsEntity.AddComponent(new FollowCamera(fpsEntity.Transform.Position));
+        lowFPSEntity.AddComponent(new FollowCamera(lowFPSEntity.Transform.Position));
 
         if (!settings.NaiveCollision)
         {

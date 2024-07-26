@@ -49,14 +49,14 @@ public static class InputManager
         {
             foreach (Keys key in Enum.GetValues(typeof(Keys)))
             {
-                keyStateWasReleased[key] = false;
-                keyStateWasPressed[key] = false;
+                keyStateWasReleasedToUpdate[key] = false;
+                keyStateWasPressedToUpdate[key] = false;
             }
             
             foreach (MouseButton key in Enum.GetValues(typeof(MouseButton)))
             {
-                mouseButtonStateWasPressed[key] = false;
-                mouseButtonStateWasReleased[key] = false;
+                mouseButtonStateWasPressedToUpdate[key] = false;
+                mouseButtonStateWasReleasedToUpdate[key] = false;
             }
         }
         

@@ -98,7 +98,6 @@ public class Animation : Component
     public override void Update(GameTime gameTime)
     {
         base.Update(gameTime);
-        
 
         if (gameTime.TotalTime.TotalSeconds > frameProgress)
         {

@@ -1,6 +1,5 @@
 ﻿using SFML.System;
 using System.Numerics;
-using SFML.Graphics;
 using Color = System.Drawing.Color;
 
 namespace GramEngine.Core;
@@ -13,6 +12,11 @@ public static class Utils
     }
     
     public static Vector3 ToVec3(this Vector2 vector)
+    {
+        return new Vector3(vector.X, vector.Y, 0);
+    }
+    
+    public static Vector3 DropZ(this Vector3 vector)
     {
         return new Vector3(vector.X, vector.Y, 0);
     }

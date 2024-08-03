@@ -17,13 +17,13 @@ public class Window
     public String WindowTitle
     {
         get => windowTitle;
-        set => window.SetTitle(windowTitle = value);
+        set => sfmlWindow.SetTitle(windowTitle = value);
     }
     public readonly WindowSettings settings;
     public Vector2 CameraPosition;
     public System.Drawing.Color BackgroundColor;
-    public uint Width { get => window.Size.X; }
-    public uint Height { get => window.Size.Y; }
+    public uint Width { get => sfmlWindow.Size.X; }
+    public uint Height { get => sfmlWindow.Size.Y; }
     public float Zoom;
     public bool WindowFocused => windowFocused;
 
@@ -44,13 +44,12 @@ public class Window
 
     private double transitionTarget;
     // internal thanks to InputManager, mouse coords needs relative
-    internal SFML.Graphics.RenderWindow window;
+    internal SFML.Graphics.RenderWindow sfmlWindow;
 
     
     public Window(IGameState initialGameState, WindowSettings settings)
     {
         gameTime = new GameTime();
-
         // TODO: come up with some smarter implementation for this
         // just have to pray no one makes more than one window
         GameStateManager.Window = this;
@@ -66,12 +65,11 @@ public class Window
         }
         style = SFML.Window.Styles.Default;
         mode = new SFML.Window.VideoMode(settings.Width, settings.Height);
-        window = new SFML.Graphics.RenderWindow(mode, settings.WindowTitle, style);
+        sfmlWindow = new SFML.Graphics.RenderWindow(mode, settings.WindowTitle, style);
         CameraPosition = new Vector2();
         mainView = new View(new FloatRect(CameraPosition.ToSFMLVector(),
             new Vector2f(settings.Width, settings.Height)));
-        mainView.Zoom(Zoom);
-        window.SetView(getLetterboxView(mainView, window.Size.X, window.Size.Y));
+        sfmlWindow.SetView(getLetterboxView(mainView, sfmlWindow.Size.X, sfmlWindow.Size.Y));
         BackgroundColor = System.Drawing.Color.Black;
         displayFrames = new List<DisplayFrame>();
         windowFocused = true;
@@ -87,16 +85,15 @@ public class Window
         transitionTarget = .3;
     }
 
-    
     public void Run()
     {
         
-        window.KeyPressed += Window_KeyPressed;
-        window.KeyReleased += Window_KeyReleased;
-        window.Resized += Window_Resized;
-        window.Closed += Window_Closed;
-        window.LostFocus += Window_LostFocus;
-        window.GainedFocus += Window_GainedFocus;
+        sfmlWindow.KeyPressed += Window_KeyPressed;
+        sfmlWindow.KeyReleased += Window_KeyReleased;
+        sfmlWindow.Resized += Window_Resized;
+        sfmlWindow.Closed += Window_Closed;
+        sfmlWindow.LostFocus += Window_LostFocus;
+        sfmlWindow.GainedFocus += Window_GainedFocus;
         
         //window.SetFramerateLimit(60);
         //window.SetVerticalSyncEnabled(true);
@@ -142,15 +139,15 @@ public class Window
         }
 
         // Start the game loop - Each iteration of this is one frame
-        while (window.IsOpen)
+        while (sfmlWindow.IsOpen)
         {
             // I hate we have to call to get current scene every frame lol
             var currentGameState = GameStateManager.GetScreen();
             var currentScene = currentGameState.GameScene;
             // Process events
-            window.DispatchEvents();
+            sfmlWindow.DispatchEvents();
             gameTime.UpdateTime();
-            window.Clear(BackgroundColor.ToSFMLColor());
+            sfmlWindow.Clear(BackgroundColor.ToSFMLColor());
 
             InputManager.Update();
 
@@ -196,8 +193,7 @@ public class Window
             currentGameState.Draw();
             mainView = new View(new FloatRect(CameraPosition.ToSFMLVector(),
                 new Vector2f(settings.Width, settings.Height)));
-            window.SetView(getLetterboxView(mainView, window.Size.X, window.Size.Y));
-            mainView.Zoom(Zoom);
+            sfmlWindow.SetView(getLetterboxView(mainView, sfmlWindow.Size.X, sfmlWindow.Size.Y));
 
             
             // Scene Transition!
@@ -208,7 +204,7 @@ public class Window
                     case SceneTransition.FadeIn:
 
                         RectangleShape fade = new RectangleShape();
-                        fade.Size = new Vector2f(window.Size.X, window.Size.Y);
+                        fade.Size = new Vector2f(sfmlWindow.Size.X, sfmlWindow.Size.Y);
                         double currentAlpha = 0;
                         transitionTimer += gameTime.DeltaTime;
 
@@ -226,13 +222,13 @@ public class Window
                         fade.FillColor = new Color(0, 0, 0, (byte)currentAlpha);
 
 
-                        window.Draw(fade);
+                        sfmlWindow.Draw(fade);
 
                         break;
                     case SceneTransition.FadeOut:
 
                         fade = new RectangleShape();
-                        fade.Size = new Vector2f(window.Size.X, window.Size.Y);
+                        fade.Size = new Vector2f(sfmlWindow.Size.X, sfmlWindow.Size.Y);
                         currentAlpha = 0;
                         transitionTimer += gameTime.DeltaTime;
 
@@ -247,7 +243,7 @@ public class Window
                         }
                         fade.FillColor = new Color(0, 0, 0, (byte)currentAlpha);
                         
-                        window.Draw(fade);
+                        sfmlWindow.Draw(fade);
 
                         break;
                 }
@@ -256,12 +252,12 @@ public class Window
             foreach (var frame in displayFrames)
             {
                 var toRender = frame.GetRenderTarget();
-                window.Draw(toRender);
+                sfmlWindow.Draw(toRender);
                 toRender.Dispose();
             }
             Render(currentScene);
             // Finally, display the rendered frame on screen
-            window.Display();
+            sfmlWindow.Display();
         }
     }
     
@@ -319,7 +315,7 @@ public class Window
 
                 if (textComponent.Enabled)
                 {
-                    window.Draw(textComponent.text);
+                    sfmlWindow.Draw(textComponent.text);
                 }
             }
             
@@ -337,7 +333,7 @@ public class Window
                 //circleCollider.circleShape.Scale = entity.Transform.Scale.ToSFMLVector();
                 if (settings.ShowColliders)
                 {
-                    window.Draw(circleCollider.circleShape);                  
+                    sfmlWindow.Draw(circleCollider.circleShape);                  
                 }
             }
             
@@ -373,7 +369,7 @@ public class Window
 
                 if (textComponent.Enabled)
                 {
-                    window.Draw(textComponent.text);
+                    sfmlWindow.Draw(textComponent.text);
                 }
             }
     }
@@ -465,12 +461,12 @@ public class Window
             if (sprite.Enabled)
             {
                 if (settings.SpriteCulling && 
-                    entity.Transform.Position.X > -10 && entity.Transform.Position.X < window.Size.X + 10 &&
-                    entity.Transform.Position.Y > -10 && entity.Transform.Position.Y < window.Size.Y + 10) 
-                    window.Draw(sprite.sfmlSprite);
+                    entity.Transform.Position.X > -10 && entity.Transform.Position.X < sfmlWindow.Size.X + 10 &&
+                    entity.Transform.Position.Y > -10 && entity.Transform.Position.Y < sfmlWindow.Size.Y + 10) 
+                    sfmlWindow.Draw(sprite.sfmlSprite);
                 else
                 {
-                    window.Draw(sprite.sfmlSprite);
+                    sfmlWindow.Draw(sprite.sfmlSprite);
 
                 }
             }
@@ -492,7 +488,7 @@ public class Window
         
             if (rect.Enabled)
                 // for z ordering, sort along 
-                window.Draw(rect.rectangleShape);
+                sfmlWindow.Draw(rect.rectangleShape);
         }
 
         if (entity.HasComponent<RenderCircle>())
@@ -511,7 +507,7 @@ public class Window
         
             if (circle.Enabled)
                 // for z ordering, sort along 
-                window.Draw(circle.circleShape);
+                sfmlWindow.Draw(circle.circleShape);
         }
 
         if (entity.HasComponent<Tilemap>())
@@ -531,7 +527,7 @@ public class Window
                 renderState.Transform.Translate(tilemap.Transform.Position.ToVec2().ToSFMLVector());
                 renderState.Transform.Scale(tilemap.Transform.Scale.ToSFMLVector());
                 
-                window.Draw(tilemap.mVertices, renderState);
+                sfmlWindow.Draw(tilemap.mVertices, renderState);
             }
         }
     }
@@ -567,7 +563,7 @@ public class Window
         }
 
         view.Viewport = new FloatRect(posX, posY, sizeX, sizeY );
-
+        view.Zoom(Zoom);
         return view;
         
     }

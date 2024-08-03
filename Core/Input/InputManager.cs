@@ -16,7 +16,7 @@ public static class InputManager
         /// <summary>
         /// The current mouse position, relative to the window's 0, 0. (Top left corner)
         /// </summary>
-        public static Vector2 MousePos => ((Vector2f)Mouse.GetPosition(GameStateManager.Window.window)).ToSysNumVector();
+        public static Vector2 MousePos => ((Vector2f)Mouse.GetPosition(GameStateManager.Window.sfmlWindow)).ToSysNumVector();
 
         internal static Dictionary<Keys, bool> keyStateWasPressedToUpdate = new Dictionary<Keys, bool>();
         internal static Dictionary<Keys, bool> keyStateWasReleasedToUpdate = new Dictionary<Keys, bool>();
@@ -30,7 +30,7 @@ public static class InputManager
 
         
         public static Vector2 MouseWorldPos => 
-            GameStateManager.Window.window.MapPixelToCoords(Mouse.GetPosition(GameStateManager.Window.window)).ToSysNumVector();
+            GameStateManager.Window.sfmlWindow.MapPixelToCoords(Mouse.GetPosition(GameStateManager.Window.sfmlWindow)).ToSysNumVector();
         /// <summary>
         /// The difference in mouse position from the last frame.
         /// </summary>

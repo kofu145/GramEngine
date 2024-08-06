@@ -75,6 +75,7 @@ public class Window
         windowFocused = true;
         transition = SceneTransition.None;
         transitionTimer = 0;
+        Zoom = 1;
         GameStateManager.AddScreen(initialGameState);
     }
 

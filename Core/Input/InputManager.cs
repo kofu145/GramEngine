@@ -68,62 +68,73 @@ public static class InputManager
 
         public static bool GetKeyPressed(Keys key)
         {
-            return Keyboard.IsKeyPressed((Keyboard.Key)key);
+            return Keyboard.IsKeyPressed((Keyboard.Key)key) && GameStateManager.Window.WindowFocused;
         }
 
         public static bool GetKeyDown(Keys key)
         {
-            bool keyPressed = Keyboard.IsKeyPressed((Keyboard.Key)key);
-            if (keyPressed && !keyStateWasPressed[key])
+            if (GameStateManager.Window.WindowFocused)
             {
-                keyStateWasPressedToUpdate[key] = true;
-                return true;
+                bool keyPressed = Keyboard.IsKeyPressed((Keyboard.Key)key);
+                if (keyPressed && !keyStateWasPressed[key])
+                {
+                    keyStateWasPressedToUpdate[key] = true;
+                    return true;
+                }
+                keyStateWasPressedToUpdate[key] = keyPressed;
             }
-            keyStateWasPressedToUpdate[key] = keyPressed;
             return false;
         }
 
         public static bool GetKeyUp(Keys key)
         {
-            bool keyPressed = Keyboard.IsKeyPressed((Keyboard.Key)key);
-            if (!keyPressed && keyStateWasReleased[key])
+            if (GameStateManager.Window.WindowFocused)
             {
-               keyStateWasReleasedToUpdate[key] = false;
-                return true;
+                bool keyPressed = Keyboard.IsKeyPressed((Keyboard.Key)key);
+                if (!keyPressed && keyStateWasReleased[key])
+                {
+                    keyStateWasReleasedToUpdate[key] = false;
+                    return true;
+                }
+
+                keyStateWasReleasedToUpdate[key] = keyPressed;
             }
-            
-            keyStateWasReleasedToUpdate[key] = keyPressed;
-            
             return false;
         }
 
         public static bool GetMousePress(MouseButton mouseButton)
         {
-            return Mouse.IsButtonPressed((Mouse.Button)mouseButton);
+            return Mouse.IsButtonPressed((Mouse.Button)mouseButton) && GameStateManager.Window.WindowFocused;
         }
         
         public static bool GetMouseButtonDown(MouseButton mouseButton)
         {
-            bool mouseButtonPressed = Mouse.IsButtonPressed((Mouse.Button)mouseButton);
-            if (mouseButtonPressed && !mouseButtonStateWasPressed[mouseButton])
+            if (GameStateManager.Window.WindowFocused)
             {
-                mouseButtonStateWasPressedToUpdate[mouseButton] = true;
-                return true;
+                bool mouseButtonPressed = Mouse.IsButtonPressed((Mouse.Button)mouseButton);
+                if (mouseButtonPressed && !mouseButtonStateWasPressed[mouseButton])
+                {
+                    mouseButtonStateWasPressedToUpdate[mouseButton] = true;
+                    return true;
+                }
+                mouseButtonStateWasPressedToUpdate[mouseButton] = mouseButtonPressed;
             }
-            mouseButtonStateWasPressedToUpdate[mouseButton] = mouseButtonPressed;
             return false;
         }
 
         public static bool GetMouseButtonUp(MouseButton mouseButton)
         {
-            bool mouseButtonPressed = Keyboard.IsKeyPressed((Keyboard.Key)mouseButton);
-            if (!mouseButtonPressed && mouseButtonStateWasReleased[mouseButton])
+            if (GameStateManager.Window.WindowFocused)
             {
-                mouseButtonStateWasReleasedToUpdate[mouseButton] = false;
-                return true;
-            }
+                bool mouseButtonPressed = Keyboard.IsKeyPressed((Keyboard.Key)mouseButton);
+                if (!mouseButtonPressed && mouseButtonStateWasReleased[mouseButton])
+                {
+                    mouseButtonStateWasReleasedToUpdate[mouseButton] = false;
+                    return true;
+                }
             
-            mouseButtonStateWasReleasedToUpdate[mouseButton] = mouseButtonPressed;
+                mouseButtonStateWasReleasedToUpdate[mouseButton] = mouseButtonPressed;
+            }
             
             return false;
         }

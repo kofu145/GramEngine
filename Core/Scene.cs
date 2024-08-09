@@ -150,6 +150,7 @@ public class Scene
         foreach(var entity in entitiesToAdd)
         {
             entity.ParentScene = this;
+            // TODO: make sure entity is not null check
             if (entity.IsUIEntity)
                 uiEntities.Add(entity);
             else

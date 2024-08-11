@@ -1,9 +1,11 @@
 ﻿using System.Numerics;
 using GramEngine.Core.Input;
+using GramEngine.Core.Shaders;
 using GramEngine.ECS;
 using SFML.Graphics;
 using SFML.Window;
 using GramEngine.ECS.Components;
+using SFML.Graphics.Glsl;
 using SFML.System;
 using Transform = GramEngine.ECS.Transform;
 
@@ -38,7 +40,7 @@ public class Window
     private SceneTransition transition;
     private bool windowFocused;
     internal List<DisplayFrame> displayFrames;
-
+    private HighlightShader highlightShader;
 
     private double transitionTimer;
 
@@ -77,6 +79,7 @@ public class Window
         transitionTimer = 0;
         Zoom = 1;
         GameStateManager.AddScreen(initialGameState);
+        highlightShader = new HighlightShader();
     }
 
     public void SetTransitionEffect(SceneTransition transition)
@@ -492,7 +495,14 @@ public class Window
                     sfmlWindow.Draw(sprite.sfmlSprite);
                 else
                 {
-                    sfmlWindow.Draw(sprite.sfmlSprite);
+                    if (entity.HasComponent<HighlightSprite>())
+                    {
+                        highlightShader.Shader.SetUniform("highlight_color", new Vec4(entity.GetComponent<HighlightSprite>().Color.ToSFMLColor()));
+                        sfmlWindow.Draw(sprite.sfmlSprite, new RenderStates(highlightShader.Shader));
+                    }
+                        
+                    else
+                        sfmlWindow.Draw(sprite.sfmlSprite);
 
                 }
             }

@@ -91,11 +91,15 @@ public class TextComponent : Component
 
     public float Width => text.GetLocalBounds().Width;
     public float Height => text.GetLocalBounds().Height;
+
+    internal static Dictionary<string, Font> Fonts = new Dictionary<string, Font>();
     
     public TextComponent(string text, string fontPath, int size, bool useLocalScale = false)
     {
         this.fontPath = fontPath;
-        this.text = new Text(text, new Font(fontPath), (uint)size);
+        if (!Fonts.ContainsKey(fontPath))
+            Fonts[fontPath] = new Font(fontPath);
+        this.text = new Text(text, Fonts[fontPath], (uint)size);
         TextOffset = new Vector2();
         LocalScale = new Vector2();
         UseLocalScale = useLocalScale;

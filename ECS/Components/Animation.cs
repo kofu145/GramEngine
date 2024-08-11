@@ -14,6 +14,7 @@ public class Animation : Component
     private bool loop = true;
     private bool particle = false;
     private bool paused = false;
+    private string? prevState = null;
     public bool Complete{
         get => currFrame >= Animations[state].Frames.Count-1 && !loop; 
     }
@@ -54,6 +55,23 @@ public class Animation : Component
             currFrame = 0;
             frameProgress = 0;
         }
+    }
+    
+    public void SetTempState(string state, bool loopAfter = true)
+    {
+        loop = loopAfter;
+        if (this.state != state)
+        {
+            prevState = this.state;
+            this.state = state;
+            currFrame = 0;
+            frameProgress = 0;
+        }
+    }
+
+    public bool HasState(string state)
+    {
+        return Animations.ContainsKey(state);
     }
 
     public void LoadTextureAtlas(string textureFilePath, string stateName, float frameTime, (int x, int y) dimensions)
@@ -107,6 +125,11 @@ public class Animation : Component
             {
                 if (particle)
                     ParentScene.DestroyEntity(ParentEntity);
+                if (prevState != null)
+                {
+                    SetState(prevState);
+                    prevState = null;
+                }
             }
             else if (!paused)
                 currFrame++;

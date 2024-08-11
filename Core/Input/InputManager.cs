@@ -18,15 +18,15 @@ public static class InputManager
         /// </summary>
         public static Vector2 MousePos => ((Vector2f)Mouse.GetPosition(GameStateManager.Window.sfmlWindow)).ToSysNumVector();
 
-        internal static Dictionary<Keys, bool> keyStateWasPressedToUpdate = new Dictionary<Keys, bool>();
-        internal static Dictionary<Keys, bool> keyStateWasReleasedToUpdate = new Dictionary<Keys, bool>();
-        internal static Dictionary<MouseButton, bool> mouseButtonStateWasPressedToUpdate = new Dictionary<MouseButton, bool>();
-        internal static Dictionary<MouseButton, bool> mouseButtonStateWasReleasedToUpdate = new Dictionary<MouseButton, bool>();
+        internal static Dictionary<Keys, bool> KeyStateWasPressedToUpdate = new Dictionary<Keys, bool>();
+        internal static Dictionary<Keys, bool> KeyStateWasReleasedToUpdate = new Dictionary<Keys, bool>();
+        internal static Dictionary<MouseButton, bool> MouseButtonStateWasPressedToUpdate = new Dictionary<MouseButton, bool>();
+        internal static Dictionary<MouseButton, bool> MouseButtonStateWasReleasedToUpdate = new Dictionary<MouseButton, bool>();
         
-        internal static Dictionary<Keys, bool> keyStateWasPressed = new Dictionary<Keys, bool>();
-        internal static Dictionary<Keys, bool> keyStateWasReleased = new Dictionary<Keys, bool>();
-        internal static Dictionary<MouseButton, bool> mouseButtonStateWasPressed = new Dictionary<MouseButton, bool>();
-        internal static Dictionary<MouseButton, bool> mouseButtonStateWasReleased = new Dictionary<MouseButton, bool>();
+        internal static Dictionary<Keys, bool> KeyStateWasPressed = new Dictionary<Keys, bool>();
+        internal static Dictionary<Keys, bool> KeyStateWasReleased = new Dictionary<Keys, bool>();
+        internal static Dictionary<MouseButton, bool> MouseButtonStateWasPressed = new Dictionary<MouseButton, bool>();
+        internal static Dictionary<MouseButton, bool> MouseButtonStateWasReleased = new Dictionary<MouseButton, bool>();
 
         
         public static Vector2 MouseWorldPos => 
@@ -49,14 +49,18 @@ public static class InputManager
         {
             foreach (Keys key in Enum.GetValues(typeof(Keys)))
             {
-                keyStateWasReleasedToUpdate[key] = false;
-                keyStateWasPressedToUpdate[key] = false;
+                KeyStateWasPressed[key] = false;
+                KeyStateWasReleased[key] = false;
+                KeyStateWasPressedToUpdate[key] = false;
+                KeyStateWasReleasedToUpdate[key] = false;
             }
             
             foreach (MouseButton key in Enum.GetValues(typeof(MouseButton)))
             {
-                mouseButtonStateWasPressedToUpdate[key] = false;
-                mouseButtonStateWasReleasedToUpdate[key] = false;
+                MouseButtonStateWasPressed[key] = false;
+                MouseButtonStateWasReleased[key] = false;
+                MouseButtonStateWasPressedToUpdate[key] = false;
+                MouseButtonStateWasReleasedToUpdate[key] = false;
             }
         }
         
@@ -75,30 +79,24 @@ public static class InputManager
         {
             if (GameStateManager.Window.WindowFocused)
             {
-                bool keyPressed = Keyboard.IsKeyPressed((Keyboard.Key)key);
-                if (keyPressed && !keyStateWasPressed[key])
-                {
-                    keyStateWasPressedToUpdate[key] = true;
-                    return true;
-                }
-                keyStateWasPressedToUpdate[key] = keyPressed;
+                if (KeyStateWasPressed[key])
+                    KeyStateWasPressedToUpdate[key] = true;
+                return KeyStateWasPressed[key];
             }
+
             return false;
+
         }
 
         public static bool GetKeyUp(Keys key)
         {
             if (GameStateManager.Window.WindowFocused)
             {
-                bool keyPressed = Keyboard.IsKeyPressed((Keyboard.Key)key);
-                if (!keyPressed && keyStateWasReleased[key])
-                {
-                    keyStateWasReleasedToUpdate[key] = false;
-                    return true;
-                }
-
-                keyStateWasReleasedToUpdate[key] = keyPressed;
+                if (KeyStateWasReleased[key])
+                    KeyStateWasReleasedToUpdate[key] = true;
+                return KeyStateWasReleased[key];
             }
+
             return false;
         }
 
@@ -111,14 +109,11 @@ public static class InputManager
         {
             if (GameStateManager.Window.WindowFocused)
             {
-                bool mouseButtonPressed = Mouse.IsButtonPressed((Mouse.Button)mouseButton);
-                if (mouseButtonPressed && !mouseButtonStateWasPressed[mouseButton])
-                {
-                    mouseButtonStateWasPressedToUpdate[mouseButton] = true;
-                    return true;
-                }
-                mouseButtonStateWasPressedToUpdate[mouseButton] = mouseButtonPressed;
+                if (MouseButtonStateWasPressed[mouseButton])
+                    MouseButtonStateWasPressedToUpdate[mouseButton] = true;
+                return MouseButtonStateWasPressed[mouseButton];
             }
+
             return false;
         }
 
@@ -126,25 +121,48 @@ public static class InputManager
         {
             if (GameStateManager.Window.WindowFocused)
             {
-                bool mouseButtonPressed = Keyboard.IsKeyPressed((Keyboard.Key)mouseButton);
-                if (!mouseButtonPressed && mouseButtonStateWasReleased[mouseButton])
-                {
-                    mouseButtonStateWasReleasedToUpdate[mouseButton] = false;
-                    return true;
-                }
-            
-                mouseButtonStateWasReleasedToUpdate[mouseButton] = mouseButtonPressed;
+                if (MouseButtonStateWasReleased[mouseButton])
+                    MouseButtonStateWasReleasedToUpdate[mouseButton] = true;
+                return MouseButtonStateWasReleased[mouseButton];
             }
-            
+
             return false;
         }
 
         internal static void Update()
         {
-            keyStateWasPressed = new Dictionary<Keys, bool>(keyStateWasPressedToUpdate);
+            foreach (var key in KeyStateWasPressed.Keys.ToList())
+            {
+                if (KeyStateWasPressedToUpdate[key])
+                {
+                    KeyStateWasPressed[key] = false;
+                    KeyStateWasPressedToUpdate[key] = false;
+                }
+
+                if (KeyStateWasReleasedToUpdate[key])
+                {
+                    KeyStateWasReleased[key] = false;
+                    KeyStateWasReleasedToUpdate[key] = false;
+                }
+            }
+            foreach (var key in MouseButtonStateWasPressed.Keys.ToList())
+            {
+                if (MouseButtonStateWasPressedToUpdate[key])
+                {
+                    MouseButtonStateWasPressed[key] = false;
+                    MouseButtonStateWasPressedToUpdate[key] = false;
+                }
+
+                if (MouseButtonStateWasReleasedToUpdate[key])
+                {
+                    MouseButtonStateWasReleased[key] = false;
+                    MouseButtonStateWasReleasedToUpdate[key] = false;
+                }
+            }
+            /*keyStateWasPressed = new Dictionary<Keys, bool>(keyStateWasPressedToUpdate);
             keyStateWasReleased = new Dictionary<Keys, bool>(keyStateWasReleasedToUpdate);
             mouseButtonStateWasPressed = new Dictionary<MouseButton, bool>(mouseButtonStateWasPressedToUpdate);
-            mouseButtonStateWasReleased = new Dictionary<MouseButton, bool>(mouseButtonStateWasReleasedToUpdate);
+            mouseButtonStateWasReleased = new Dictionary<MouseButton, bool>(mouseButtonStateWasReleasedToUpdate);*/
         }
         
         /*

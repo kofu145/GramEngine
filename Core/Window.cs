@@ -91,6 +91,8 @@ public class Window
         
         sfmlWindow.KeyPressed += Window_KeyPressed;
         sfmlWindow.KeyReleased += Window_KeyReleased;
+        sfmlWindow.MouseButtonPressed += Window_MouseButtonPressed;
+        sfmlWindow.MouseButtonReleased += Window_MouseButtonReleased;
         sfmlWindow.Resized += Window_Resized;
         sfmlWindow.Closed += Window_Closed;
         sfmlWindow.LostFocus += Window_LostFocus;
@@ -150,11 +152,12 @@ public class Window
             gameTime.UpdateTime();
             sfmlWindow.Clear(BackgroundColor.ToSFMLColor());
 
-            InputManager.Update();
 
             currentScene.UpdateEntitiesList();
             
             currentGameState.Update(gameTime);
+            InputManager.Update();
+
             
             // may be more delay from onload to now vs between frames?
             //Console.WriteLine(gameTime.DeltaTime);
@@ -385,7 +388,7 @@ public class Window
         {
             window.Close();
         }*/
-
+        InputManager.KeyStateWasPressed[(Keys)e.Code] = true;
     }
     
     /// <summary>
@@ -400,7 +403,29 @@ public class Window
         {
             window.Close();
         }*/
+        InputManager.KeyStateWasReleased[(Keys)e.Code] = true;
+        
+    }
+    
 
+    private void Window_MouseButtonPressed(object sender, SFML.Window.MouseButtonEventArgs e)
+    {
+        var window = (SFML.Window.Window)sender;
+        /*if (e.Code == Keyboard.Key.Escape)
+        {
+            window.Close();
+        }*/
+        InputManager.MouseButtonStateWasPressed[(MouseButton)e.Button] = true;
+    }
+    
+    private void Window_MouseButtonReleased(object sender, SFML.Window.MouseButtonEventArgs e)
+    {
+        var window = (SFML.Window.Window)sender;
+        /*if (e.Code == Keyboard.Key.Escape)
+        {
+            window.Close();
+        }*/
+        InputManager.MouseButtonStateWasReleased[(MouseButton)e.Button] = true;
         
     }
     

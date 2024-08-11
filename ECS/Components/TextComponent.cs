@@ -65,6 +65,18 @@ public class TextComponent : Component
         set => text.FillColor = value.ToSFMLColor();
     }
 
+    public Color OutlineColor
+    {
+        get => text.OutlineColor.ToSysColor();
+        set => text.OutlineColor = value.ToSFMLColor();
+    }
+
+    public float OutlineThickness
+    {
+        get => text.OutlineThickness;
+        set => text.OutlineThickness = value;
+    }
+
     public Styles Style
     {
         get => (Styles)text.Style;

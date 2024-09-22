@@ -144,6 +144,9 @@ public static class InputManager
                     KeyStateWasReleased[key] = false;
                     KeyStateWasReleasedToUpdate[key] = false;
                 }
+                // calling these here so they don't "queue" keys
+                GetKeyDown(key);
+                GetKeyUp(key);
             }
             foreach (var key in MouseButtonStateWasPressed.Keys.ToList())
             {
@@ -158,6 +161,9 @@ public static class InputManager
                     MouseButtonStateWasReleased[key] = false;
                     MouseButtonStateWasReleasedToUpdate[key] = false;
                 }
+                // called for some reason as above
+                GetMouseButtonDown(key);
+                GetMouseButtonUp(key);
             }
             /*keyStateWasPressed = new Dictionary<Keys, bool>(keyStateWasPressedToUpdate);
             keyStateWasReleased = new Dictionary<Keys, bool>(keyStateWasReleasedToUpdate);

@@ -51,7 +51,7 @@ public class Scene
     /// Use <see cref="FindEntitiesWithTag"/> if you have multiple entities with the same tag.
     /// </summary>
     /// <param name="tag">The entity tag to be searched for.</param>
-    public Entity FindWithTag(string tag)
+    public Entity? FindWithTag(string tag)
     {
         foreach (var entity in entities)
         {
@@ -69,7 +69,7 @@ public class Scene
     /// Use <see cref="FindUIEntitiesWithTag"/> if you have multiple entities with the same tag.
     /// </summary>
     /// <param name="tag">The entity tag to be searched for.</param>
-    public Entity FindUIEntityWithTag(string tag)
+    public Entity? FindUIEntityWithTag(string tag)
     {
         foreach (var entity in uiEntities)
         {

@@ -93,42 +93,4 @@ public class Button : Component
             } 
         }
     }
-    // made these private, because I don't see many reasons you'd force them to trigger?
-    // If you do, sounds like bad architectural design on user end
-
-    private void StartHover()
-    {
-        //animation.SetTexture(1);
-        Console.WriteLine("hovering!");
-    }
-    private void StopHover()
-    {
-        //var animation = ParentEntity.GetComponent<Animation>();
-        //animation.SetTexture(0);
-        Console.WriteLine("stopped hovering!");
-
-    }
-    private void StartPress()
-    {
-        //var animation = ParentEntity.GetComponent<Animation>();
-        //animation.SetTexture(2);
-        Console.WriteLine("pressing!!");
-
-    }
-    private void StopPress()
-    {
-        var animation = ParentEntity.GetComponent<Animation>();
-        if (isHovered)
-        {
-            //animation.SetTexture(1);
-            Console.WriteLine("stoped ppressing!!");
-
-        }
-        else
-        {
-            //animation.SetTexture(0);
-            Console.WriteLine("stoped ppressing!! not hovering!");
-
-        }
-    }
 }

@@ -140,7 +140,7 @@ public class Window
         if (!settings.NaiveCollision)
         {
             var circleCollisionManager = new Entity();
-            circleCollisionManager.AddComponent(new CircleColliderSystem(100));
+            circleCollisionManager.AddComponent(new CircleColliderSystem(settings.ColliderCellOffset));
             GameStateManager.GetScreen().GameScene.AddEntity(circleCollisionManager);
         }
 
@@ -160,6 +160,12 @@ public class Window
             
             currentGameState.Update(gameTime);
             InputManager.Update();
+            if (!settings.NaiveCollision && !currentScene.Entities.Any(e => e.HasComponent<CircleColliderSystem>()))
+            {
+                var circleCollisionManager = new Entity();
+                circleCollisionManager.AddComponent(new CircleColliderSystem(settings.ColliderCellOffset));
+                GameStateManager.GetScreen().GameScene.AddEntity(circleCollisionManager);
+            }
 
             
             // may be more delay from onload to now vs between frames?
@@ -173,22 +179,27 @@ public class Window
             {
                 fpsEntity = currentScene.FindUIEntityWithTag("FPS");
                 lowFPSEntity = currentScene.FindUIEntityWithTag("lowFPS");
-                // small fps calc
-                framesRendered++;
-                if ((DateTime.Now - lastTime).TotalSeconds >= 1)
+
+                if (fpsEntity != null && lowFPSEntity != null)
                 {
-                    var fps = framesRendered;
-                    framesRendered = 0;
-                    lastTime = DateTime.Now;
-                    //Console.WriteLine(fps);
-                    fpsEntity.GetComponent<TextComponent>().Text = "FPS: " + fps.ToString();
-                    if (fps < lowestFPS && fps > 10)
+                    // small fps calc
+                    framesRendered++;
+                    if ((DateTime.Now - lastTime).TotalSeconds >= 1)
                     {
-                        lowestFPS = fps;
-                        lowFPSEntity.GetComponent<TextComponent>().Text = "Lowest FPS: " + lowestFPS.ToString();
-                    }
+                        var fps = framesRendered;
+                        framesRendered = 0;
+                        lastTime = DateTime.Now;
+                        //Console.WriteLine(fps);
+                        fpsEntity.GetComponent<TextComponent>().Text = "FPS: " + fps.ToString();
+                        if (fps < lowestFPS && fps > 10)
+                        {
+                            lowestFPS = fps;
+                            lowFPSEntity.GetComponent<TextComponent>().Text = "Lowest FPS: " + lowestFPS.ToString();
+                        }
                 
+                    }
                 }
+                
             }
             //lowFPSEntity.GetComponent<TextComponent>().Text = "entities: " + currentScene.Entities.Count;
 

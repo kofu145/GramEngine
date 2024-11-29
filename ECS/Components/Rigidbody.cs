@@ -6,11 +6,13 @@ namespace GramEngine.ECS.Components;
 public class Rigidbody : Component
 {
     public Vector3 Velocity { get; set; }
+    public float Mass;
     
     private bool moveWithRotation;
 
     public Rigidbody(bool moveWithRotation = false)
     {
+        Mass = 1;
         Velocity = Vector3.Zero;
         this.moveWithRotation = moveWithRotation;
     }

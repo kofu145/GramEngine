@@ -9,6 +9,8 @@ internal class CircleColliderSystem : Component
     private float offset;
     private int rows;
     private int cols;
+    private float negYOffset;
+    private float negXOffset;
 
     public CircleColliderSystem(float offset)
     {
@@ -18,10 +20,10 @@ internal class CircleColliderSystem : Component
         cols = (int)Math.Ceiling((settings.Width + 500) / offset);
         grid = new List<CircleCollider>[rows][];
 
-        for (int i=0; i<grid.Length; i++)
+        for (int i = 0; i < grid.Length; i++)
         {
             grid[i] = new List<CircleCollider>[cols];
-            
+
             for (int j = 0; j < grid[0].Length; j++)
             {
                 grid[i][j] = new List<CircleCollider>();
@@ -29,7 +31,7 @@ internal class CircleColliderSystem : Component
         }
 
     }
-    
+
     public override void Initialize()
     {
         base.Initialize();
@@ -56,6 +58,40 @@ internal class CircleColliderSystem : Component
         // cols / 4, rows / 4, end at cols / 4 * 2
     }
 
+    public void ResetGrid()
+    {
+        var orderedByY = ParentScene.Entities.OrderBy(entity => entity.Transform.Position.Y);
+        var orderedByX = ParentScene.Entities.OrderBy(entity => entity.Transform.Position.X);
+        var lowestY = orderedByY.First(entity => 
+            entity.Transform.Position.Y != Int32.MaxValue || 
+            entity.Transform.Position.Y != Int32.MinValue).Transform.Position.Y;
+        var lowestX = orderedByX.First(entity => 
+            entity.Transform.Position.X != Int32.MaxValue || 
+            entity.Transform.Position.X != Int32.MinValue).Transform.Position.X;
+        float maxY = orderedByY.Last(entity => 
+            entity.Transform.Position.Y != Int32.MaxValue || 
+            entity.Transform.Position.Y != Int32.MinValue).Transform.Position.Y + Math.Abs(lowestY);
+        float maxX = orderedByX.Last(entity => 
+            entity.Transform.Position.X != Int32.MaxValue || 
+            entity.Transform.Position.X != Int32.MinValue).Transform.Position.X + Math.Abs(lowestX);
+        negYOffset = lowestY < 0 ? Math.Abs(lowestY) : 0;
+        negXOffset = lowestX < 0 ? Math.Abs(lowestX) : 0;
+        
+        rows = (int)Math.Ceiling((maxY + 100) / offset);
+        cols = (int)Math.Ceiling((maxX + 100) / offset);
+        grid = new List<CircleCollider>[rows][];
+
+        for (int i = 0; i < grid.Length; i++)
+        {
+            grid[i] = new List<CircleCollider>[cols];
+
+            for (int j = 0; j < grid[0].Length; j++)
+            {
+                grid[i][j] = new List<CircleCollider>();
+            }
+        }
+    }
+
     private Thread StartCollisionThread(Vector2 start, Vector2 end)
     {
         var t = new Thread(() => FindCollisions(start, end));
@@ -66,6 +102,7 @@ internal class CircleColliderSystem : Component
 
     private void ConstructGrid()
     {
+        ResetGrid();
         // wtf are C# multidimensional arrays
         for (int i=0; i<grid.Length; i++)
         {
@@ -80,15 +117,15 @@ internal class CircleColliderSystem : Component
         {
             
             var pos = entity.Transform.Position;
-            if (pos.X < 0 || pos.Y < 0)
+            if (pos.X == Int32.MaxValue || pos.X == Int32.MinValue || pos.Y == Int32.MaxValue || pos.Y == Int32.MinValue)
                 continue;
 
             var circleCollider = entity.GetComponent<CircleCollider>();
             
             //Console.WriteLine(pos.ToString());
-            //Console.WriteLine($"i, j: {(int)(pos.X/offset)}, {(int)(pos.Y/offset)}");
+            //Console.WriteLine($"i, j: {(int)(pos.X + negXOffset)/offset}, {(int)(pos.Y/offset)}");
             if (circleCollider.Enabled)
-                grid[(int)(pos.Y/offset)][(int)(pos.X/offset)].Add(circleCollider);
+                grid[(int)((pos.Y + negYOffset)/offset)][(int)((pos.X + negXOffset)/offset)].Add(circleCollider);
         }
            
     }
@@ -157,8 +194,8 @@ internal class CircleColliderSystem : Component
         
             // basic distance formula, sqrt((x2 - x1)^2 + (y2 - y1)^2) (but sqrt is expensive, so we are just doing comparison of squared)
             float squaredDistBetweenCircles =
-                (e2T.Position.X - e1T.Position.X) * (e2T.Position.X - e1T.Position.X) +
-                (e2T.Position.Y - e1T.Position.Y) * (e2T.Position.Y - e1T.Position.Y);
+                Math.Abs((e1T.Position.X - e2T.Position.X) * (e1T.Position.X - e2T.Position.X) +
+                (e1T.Position.Y - e2T.Position.Y) * (e1T.Position.Y - e2T.Position.Y));
 
             if (squaredDistBetweenCircles < (c1.Radius + c2.Radius) * (c1.Radius + c2.Radius))
             {
@@ -181,31 +218,69 @@ internal class CircleColliderSystem : Component
 
                 var distToMove = c1.Radius + c2.Radius - distBetweenCircles;
                 // do moving circle collision (reposition circle accordingly)
-                if (!c1.Dynamic && !c2.Dynamic)
+                if (!c1.isTrigger && !c2.isTrigger)
                 {
-                    // static static collision
-                }
-                
-                if (c1.Dynamic)
-                {
-                    
-                    if (!c2.Dynamic)
+                    if (!c1.Dynamic && !c2.Dynamic)
                     {
-                        // move the collider to match bounds
-                        e1T.Position.X -= (float)(Math.Cos(angle) * distToMove);
-                        e1T.Position.Y -= (float)(Math.Sin(angle) * distToMove);
+                        // static static collision
+                        /*
+                        double midpointx = (e1T.Position.X + e2T.Position.X) / 2;
+                        double midpointy = (e1T.Position.Y + e2T.Position.Y) / 2;
+                        e1T.Position.X = (float)(midpointx + c1.Radius * (e1T.Position.X - e2T.Position.X) / distBetweenCircles); 
+                        e1T.Position.Y = (float)(midpointy + c1.Radius * (e1T.Position.Y - e2T.Position.Y) / distBetweenCircles); 
+                        e2T.Position.X = (float)(midpointx + c2.Radius * (e2T.Position.X - e1T.Position.X) / distBetweenCircles); 
+                        e2T.Position.Y = (float)(midpointy + c2.Radius * (e2T.Position.Y - e1T.Position.Y) / distBetweenCircles);
+                    
+                        c1.IsColliding = false;
+                        c2.IsColliding = false;*/
+                        
+                        e1T.Position.X -= (float)(Math.Cos(angle) * distToMove)/2 ;
+                        e1T.Position.Y -= (float)(Math.Sin(angle) * distToMove)/2 ;
+                        e2T.Position.X += (float)(Math.Cos(angle) * distToMove)/2;
+                        e2T.Position.Y += (float)(Math.Sin(angle) * distToMove)/2;
                         c1.IsColliding = false;
                         c2.IsColliding = false;
                     }
-                    else
+                
+                    if (c1.Dynamic)
                     {
+                    
+                    
+                        if (!c2.Dynamic)
+                        {
+                            // move the collider to match bounds
+                            e1T.Position.X -= (float)(Math.Cos(angle) * distToMove);
+                            e1T.Position.Y -= (float)(Math.Sin(angle) * distToMove);
+                            c1.IsColliding = false;
+                            c2.IsColliding = false;
+                        }
+                        else
+                        {
+                            /*double nx = (e2T.Position.X - e1T.Position.X) / distBetweenCircles;
+                            double ny = (e2T.Position.Y - e1T.Position.Y) / distBetweenCircles;
+                            var rb1 = e1.GetComponent<Rigidbody>();
+                            var rb2 = e2.GetComponent<Rigidbody>();
+                            // subbing any mass eq for 1
+                            double p = 2 * (rb1.Velocity.X * nx + rb1.Velocity.Y * ny - rb2.Velocity.X * nx - rb2.Velocity.Y * ny) / 
+                                       (rb1.Mass + rb2.Mass); 
+                            float vx1 = (float)(rb1.Velocity.X - p * rb1.Mass * nx); 
+                            float vy1 = (float)(rb1.Velocity.Y - p * rb1.Mass * ny); 
+                            float vx2 = (float)(rb2.Velocity.X + p * rb2.Mass * nx); 
+                            float vy2 = (float)(rb2.Velocity.Y + p * rb2.Mass * ny);
 
-                        // move the collider to match bounds
-                        e2T.Position.X += (float)(Math.Cos(angle) * distToMove);
-                        e2T.Position.Y += (float)(Math.Sin(angle) * distToMove);
-                        c1.IsColliding = false;
-                        c2.IsColliding = false;
+                            rb1.Velocity = new Vector3(vx1, vy1, 0);
+                            rb2.Velocity = new Vector3(vx2, vy2, 0);
+                            Console.WriteLine(rb1.Velocity);*/
+                            
+                            // move the collider to match bounds
+                            e1T.Position.X -= (float)(Math.Cos(angle) * distToMove)/2 ;
+                            e1T.Position.Y -= (float)(Math.Sin(angle) * distToMove)/2 ;
+                            e2T.Position.X += (float)(Math.Cos(angle) * distToMove)/2;
+                            e2T.Position.Y += (float)(Math.Sin(angle) * distToMove)/2;
+                            c1.IsColliding = false;
+                            c2.IsColliding = false;
 
+                        }
                     }
                 }
             }

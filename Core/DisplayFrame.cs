@@ -13,17 +13,22 @@ public class DisplayFrame
     private RenderTexture frame;
     public Transform Transform;
 
-    public DisplayFrame(uint width, uint height)
+    public DisplayFrame(int x, int y, uint width, uint height)
     {
         frame = new RenderTexture(width, height);
+        frame.SetView(new View(new FloatRect(new Vector2f(x, y), new Vector2f(width, height))));
         Transform = new Transform();
     }
 
     public void RenderSprite(Entity entity)
     {
-        var sprite = entity.GetComponent<Sprite>();
-        sprite.GetTransformTarget();
-        frame.Draw(sprite.sfmlSprite);
+        if (entity.HasComponent<Sprite>())
+        {
+            
+            var sprite = entity.GetComponent<Sprite>();
+            sprite.GetTransformTarget();
+            frame.Draw(sprite.sfmlSprite);
+        }
     }
 
     public void RenderSprite(Sprite sprite, int x, int y, int rotation)

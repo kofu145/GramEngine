@@ -15,18 +15,18 @@ public class CircleCollider : Component
     public event OnCollisionExit OnExitCollision;
 
     public float Radius;
-    public bool Dynamic;
+    public bool Dynamic => ParentEntity.HasComponent<Rigidbody>();
     public bool CheckCollision;
+    public bool isTrigger;
     internal CircleShape circleShape;
     public bool IsColliding { get; internal set; }
     internal bool wasColliding;
 
     private bool isNaive;
-    public CircleCollider(float radius, bool isDynamic, bool checkCollision = true)
+    public CircleCollider(float radius, bool isTrigger, bool checkCollision = true)
     {
         Radius = radius;
-        // maybe we can just check if we have a rigidbody?
-        Dynamic = isDynamic;
+        this.isTrigger = isTrigger;
         CheckCollision = checkCollision;
         circleShape = new CircleShape(radius);
         circleShape.FillColor = System.Drawing.Color.Empty.ToSFMLColor();
@@ -93,6 +93,24 @@ public class CircleCollider : Component
                     OnCollision?.Invoke(otherCollider);
                     IsColliding = true;
 
+                    if (!isTrigger && !otherCollider.isTrigger)
+                    {
+                        double angle = Math.Atan2(otherTransform.Position.Y - Transform.Position.Y, otherTransform.Position.X - Transform.Position.X);
+
+                        // we only calc the dist here as needed, because sqrt() is expensive
+                        var distBetweenCircles = Math.Sqrt(squaredDistBetweenCircles);
+
+                        var distToMove = Radius + otherCollider.Radius - distBetweenCircles;
+                        // move the collider to match bounds
+                        Transform.Position.X -= (float)(Math.Cos(angle) * distToMove) / 2;
+                        Transform.Position.Y -= (float)(Math.Sin(angle) * distToMove) / 2;
+                        otherTransform.Position.X += (float)(Math.Cos(angle) * distToMove) / 2;
+                        otherTransform.Position.Y += (float)(Math.Sin(angle) * distToMove) / 2;
+                        IsColliding = false;
+
+                    }
+                    
+
                     // TODO: swept testing for higher velocity colliders
                     // do moving circle collision (reposition circle accordingly)
                     if (Dynamic)
@@ -103,22 +121,28 @@ public class CircleCollider : Component
                         var distBetweenCircles = Math.Sqrt(squaredDistBetweenCircles);
 
                         var distToMove = Radius + otherCollider.Radius - distBetweenCircles;
-
-                        if (otherCollider.Dynamic)
+                        if (!isTrigger && !otherCollider.isTrigger)
                         {
-                            // move the collider to match bounds
-                            Transform.Position.X -= (float)(Math.Cos(angle) * distToMove);
-                            Transform.Position.Y -= (float)(Math.Sin(angle) * distToMove);
-                            IsColliding = false;
+                            
+                            if (otherCollider.Dynamic)
+                            {
+                                // move the collider to match bounds
+                                Transform.Position.X -= (float)(Math.Cos(angle) * distToMove) / 2;
+                                Transform.Position.Y -= (float)(Math.Sin(angle) * distToMove) / 2;
+                                otherTransform.Position.X += (float)(Math.Cos(angle) * distToMove) / 2;
+                                otherTransform.Position.Y += (float)(Math.Sin(angle) * distToMove) / 2;
+                            }
+                            /*else
+                            {
+                                // move the collider to match bounds
+                                otherTransform.Position.X += (float)(Math.Cos(angle) * distToMove);
+                                otherTransform.Position.Y += (float)(Math.Sin(angle) * distToMove);
+                                IsColliding = false;
+
+                            }*/
                         }
-                        /*else
-                        {
-                            // move the collider to match bounds
-                            otherTransform.Position.X += (float)(Math.Cos(angle) * distToMove);
-                            otherTransform.Position.Y += (float)(Math.Sin(angle) * distToMove);
-                            IsColliding = false;
+                        IsColliding = false;
 
-                        }*/
                     }
                 }
                 if (!IsColliding && wasColliding)

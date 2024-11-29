@@ -8,6 +8,8 @@ public struct WindowSettings
     public int GlobalXOffset;
     public int GlobalYOffset;
     public bool ShowColliders;
+
+    public int ColliderCellOffset;
     // This one is purely for demonstrating/comparing efficiency.
     public bool NaiveCollision;
     public bool ShowFPS;
@@ -25,6 +27,7 @@ public struct WindowSettings
         GlobalYOffset = 0;
         ShowColliders = false;
         NaiveCollision = false;
+        ColliderCellOffset = 100;
         BaseWindowHeight = 1280;
         BaseWindowWidth = 720;
         ShowFPS = false;

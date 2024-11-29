@@ -69,6 +69,22 @@ public static class GameStateManager
             {
                 Console.WriteLine(e.Message);
                 Console.WriteLine(e.StackTrace);
+                
+                using( StreamWriter writer = new StreamWriter("./error.txt", true ) )
+                {
+                    writer.WriteLine( "-----------------------------------------------------------------------------" );
+                    writer.WriteLine( "Date : " + DateTime.Now.ToString() );
+                    writer.WriteLine();
+
+                    while( e != null )
+                    {
+                        writer.WriteLine( e.GetType().FullName );
+                        writer.WriteLine( "Message : " + e.Message );
+                        writer.WriteLine( "StackTrace : " + e.StackTrace );
+
+                        e = e.InnerException;
+                    }
+                }
             }
         }
         
@@ -94,6 +110,21 @@ public static class GameStateManager
             {
                 Console.WriteLine(e.Message);
                 Console.WriteLine(e.StackTrace);
+                using( StreamWriter writer = new StreamWriter("./error.txt", true ) )
+                {
+                    writer.WriteLine( "-----------------------------------------------------------------------------" );
+                    writer.WriteLine( "Date : " + DateTime.Now.ToString() );
+                    writer.WriteLine();
+
+                    while( e != null )
+                    {
+                        writer.WriteLine( e.GetType().FullName );
+                        writer.WriteLine( "Message : " + e.Message );
+                        writer.WriteLine( "StackTrace : " + e.StackTrace );
+
+                        e = e.InnerException;
+                    }
+                }
             }
         }
         
@@ -112,7 +143,21 @@ public static class GameStateManager
             {
                 Console.WriteLine(e.Message);
                 Console.WriteLine(e.StackTrace);
+                using( StreamWriter writer = new StreamWriter("./error.txt", true ) )
+                {
+                    writer.WriteLine( "-----------------------------------------------------------------------------" );
+                    writer.WriteLine( "Date : " + DateTime.Now.ToString() );
+                    writer.WriteLine();
 
+                    while( e != null )
+                    {
+                        writer.WriteLine( e.GetType().FullName );
+                        writer.WriteLine( "Message : " + e.Message );
+                        writer.WriteLine( "StackTrace : " + e.StackTrace );
+
+                        e = e.InnerException;
+                    }
+                }
             }
             return null;
         }
@@ -133,7 +178,21 @@ public static class GameStateManager
                 {
                     Console.WriteLine(e.Message);
                     Console.WriteLine(e.StackTrace);
+                    using( StreamWriter writer = new StreamWriter("./error.txt", true ) )
+                    {
+                        writer.WriteLine( "-----------------------------------------------------------------------------" );
+                        writer.WriteLine( "Date : " + DateTime.Now.ToString() );
+                        writer.WriteLine();
 
+                        while( e != null )
+                        {
+                            writer.WriteLine( e.GetType().FullName );
+                            writer.WriteLine( "Message : " + e.Message );
+                            writer.WriteLine( "StackTrace : " + e.StackTrace );
+
+                            e = e.InnerException;
+                        }
+                    }
                 }
             }
         }

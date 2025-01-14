@@ -216,6 +216,8 @@ public static class GameStateManager
             }
             else
             {
+                RemoveScreen();
+
                 // add screen to the stack
                 screens.Push(screen);
                 /*

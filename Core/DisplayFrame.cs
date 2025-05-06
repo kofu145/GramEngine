@@ -37,11 +37,21 @@ public class DisplayFrame
         sprite.sfmlSprite.Rotation = rotation;
         frame.Draw(sprite.sfmlSprite);
     }
+    
+    public void RenderSprite(Sprite sprite, int x, int y, int rotation, Vector2 scale)
+    {
+        sprite.sfmlSprite.Position = new Vector2f(x, y);
+        sprite.sfmlSprite.Rotation = rotation;
+        sprite.sfmlSprite.Scale = scale.ToSFMLVector();
+        frame.Draw(sprite.sfmlSprite);
+    }
 
     public void RenderText(TextComponent text, int x, int y, int rotation)
     {
         text.text.Position = new Vector2f(x, y);
         text.text.Rotation = rotation;
+        if (text.UseLocalScale)
+            text.text.Scale = text.LocalScale.ToSFMLVector();
         frame.Draw(text.text);
     }
 

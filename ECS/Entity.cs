@@ -53,6 +53,11 @@ namespace GramEngine.ECS;
         public bool IsUIEntity { get; set; } = false;
 
         /// <summary>
+        /// Quick check set, so components added after entity's been added to scene still get Initialize() called.
+        /// </summary>
+        private bool initialized = false;
+
+        /// <summary>
         /// Initializes a new entity.
         /// </summary>
         public Entity(bool isUiEntity = false)
@@ -101,6 +106,8 @@ namespace GramEngine.ECS;
             {
                 component.Value.Initialize();
             }
+
+            initialized = true;
         }
 
         internal void OnLoad()
@@ -168,6 +175,10 @@ namespace GramEngine.ECS;
         {
             components[typeof(T)] = component;
             component.SetParent(this);
+            if (initialized)
+            {
+                component.Initialize();
+            }
             return component;
         }
 

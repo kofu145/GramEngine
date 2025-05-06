@@ -16,9 +16,7 @@ public abstract class Component : IComponent
     public bool Enabled { get; set; } = true;
     
     // these two methods aren't abstract in case the users don't want to define them
-
-    
-    public virtual void Initialize() {}
+    public virtual void Initialize() { }
 
     public virtual void OnLoad() { }
     // Late and Early update might come up sometime in the future? but they don't seem like they're very needed for now

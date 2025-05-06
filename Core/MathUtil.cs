@@ -24,6 +24,28 @@ public class MathUtil
         return new Vector3(Lerp(v1.X, v2.X, t), Lerp(v1.Y, v2.Y, t), Lerp(v1.Z, v2.Z, t));
     }
 
+    /// <summary>
+    /// Simply applies a given delta value as a difference between vectors, moving delta dist from V1 to V2.
+    /// This is analogous towards something like move_toward in godot.
+    /// </summary>
+    /// <param name="v1"></param>
+    /// <param name="v2"></param>
+    /// <param name="delta"></param>
+    /// <returns></returns>
+    public static Vector2 SelfLerp(Vector2 v1, Vector2 v2, float delta)
+    {
+        Vector2 vd = v2 - v1;
+        float len = vd.Length();
+        return len <= delta || len < 0 ? v2 : v1 + vd / len * delta;
+    }
+    
+    public static Vector3 SelfLerp(Vector3 v1, Vector3 v2, float delta)
+    {
+        Vector3 vd = v2 - v1;
+        float len = vd.Length();
+        return len <= delta || len < 0 ? v2 : v1 + vd / len * delta;
+    }
+
     public static float RadToDeg(float radians)
     {
         return 180 / (float)Math.PI * radians;
